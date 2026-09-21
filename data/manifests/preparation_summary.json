@@ -1,0 +1,21 @@
+{
+  "original_records": 3662,
+  "decision_counts": {
+    "EXCLUDE_CONFLICTING_LABEL": 62,
+    "EXCLUDE_REDUNDANT_DUPLICATE": 96,
+    "INCLUDE": 3504
+  },
+  "eligible_records": 3504,
+  "eligible_class_counts": {
+    "0": 1796,
+    "1": 338,
+    "2": 922,
+    "3": 177,
+    "4": 271
+  },
+  "policy": {
+    "conflicting_label_duplicates": "Exclude every member",
+    "same_label_duplicates": "Retain the alphabetically first image identifier",
+    "unique_images": "Include"
+  }
+}

@@ -10,6 +10,8 @@
 - [x] Detect exact duplicate images
 - [ ] Review image quality
 - [x] Save reproducible image audit script and results
+- [x] Create auditable dataset preparation manifest
+- [ ] Detect and review visually similar images
 - [ ] Create and freeze dataset splits
 - [ ] Implement baseline preprocessing and CNN
 - [ ] Evaluate augmentation and class balancing

@@ -84,3 +84,29 @@ Planned handling:
 The audit does not establish that the remaining medical labels are clinically
 correct. It identifies technical duplication and direct conflicts in the
 provided labels.
+
+## Modelling-record preparation
+
+The original dataset remains unchanged. A preparation manifest records the
+decision for every original image.
+
+| Decision | Records |
+|---|---:|
+| Included for modelling | 3,504 |
+| Excluded redundant same-label copies | 96 |
+| Excluded conflicting-label duplicates | 62 |
+| Original records | 3,662 |
+
+Eligible class distribution:
+
+| Grade | Class | Eligible records |
+|---|---|---:|
+| 0 | No DR | 1,796 |
+| 1 | Mild | 338 |
+| 2 | Moderate | 922 |
+| 3 | Severe | 177 |
+| 4 | Proliferative DR | 271 |
+
+The manifest retains one deterministic representative from each identical
+same-label group and excludes every member of an identical-image group when
+its labels conflict. Raw files are preserved and are never overwritten.

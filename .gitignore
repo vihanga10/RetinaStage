@@ -1,5 +1,7 @@
-# Datasets and archives
-/data/
+# Large datasets and generated image data
+/data/raw/
+/data/processed/
+/data/cache/
 *.zip
 
 # Python environments and caches
