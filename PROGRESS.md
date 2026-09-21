@@ -12,7 +12,7 @@
 - [x] Save reproducible image audit script and results
 - [x] Create auditable dataset preparation manifest
 - [x] Detect and review visually similar images
-- [ ] Create and freeze dataset splits
+- [x] Create and freeze dataset splits
 - [ ] Implement baseline preprocessing and CNN
 - [ ] Evaluate augmentation and class balancing
 - [ ] Compare preprocessing and model experiments

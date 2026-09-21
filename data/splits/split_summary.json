@@ -1,0 +1,52 @@
+{
+  "random_seed": 20260921,
+  "eligible_records": 3487,
+  "target_proportions": {
+    "train": 0.65,
+    "validation": 0.15,
+    "calibration": 0.05,
+    "test": 0.15
+  },
+  "overall_counts": {
+    "calibration": 174,
+    "test": 523,
+    "train": 2267,
+    "validation": 523
+  },
+  "class_split_counts": {
+    "0": {
+      "calibration": 90,
+      "test": 269,
+      "train": 1168,
+      "validation": 269
+    },
+    "1": {
+      "calibration": 17,
+      "test": 51,
+      "train": 219,
+      "validation": 51
+    },
+    "2": {
+      "calibration": 46,
+      "test": 138,
+      "train": 599,
+      "validation": 138
+    },
+    "3": {
+      "calibration": 8,
+      "test": 25,
+      "train": 110,
+      "validation": 25
+    },
+    "4": {
+      "calibration": 13,
+      "test": 40,
+      "train": 171,
+      "validation": 40
+    }
+  },
+  "split_manifest_sha256": "b2024cba2260e0d3470a37f744f341db3a45451ffe2490ae351dbaf6da5ee211",
+  "limitations": [
+    "The source labels do not provide explicit patient identifiers, so patient-level separation cannot be verified."
+  ]
+}

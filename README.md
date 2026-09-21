@@ -161,3 +161,27 @@ processing differences. Connected pairs were handled as groups.
 Every member of a conflicting-label group was excluded. For a same-label
 group, one deterministic representative was retained. No original file or
 source label was changed.
+
+## Frozen dataset splits
+
+The 3,487 eligible records were stratified by disease grade using the fixed
+random seed `20260921`.
+
+| Split | Records | Purpose |
+|---|---:|---|
+| Training | 2,267 | Model parameter learning |
+| Validation | 523 | Model and hyperparameter selection |
+| Calibration | 174 | Confidence calibration |
+| Test | 523 | Final evaluation after all choices are frozen |
+
+The split manifest SHA-256 fingerprint is:
+
+`b2024cba2260e0d3470a37f744f341db3a45451ffe2490ae351dbaf6da5ee211`
+
+Repeated execution produced the same fingerprint and class counts. The test
+partition must remain unused until preprocessing, architecture, loss and
+threshold choices have been completed.
+
+The source data does not provide explicit patient identifiers. Therefore,
+patient-level separation cannot be confirmed, although exact and reviewed
+near-duplicate images were handled before splitting.
