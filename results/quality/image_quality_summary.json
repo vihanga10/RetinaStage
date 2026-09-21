@@ -1,0 +1,90 @@
+{
+  "eligible_images": 3504,
+  "successfully_measured": 3504,
+  "measurement_failures": [],
+  "analysis_size": 512,
+  "percentiles": {
+    "brightness_mean": {
+      "0": 27.528983,
+      "2.5": 44.917819,
+      "5": 48.606858,
+      "25": 73.626593,
+      "50": 91.370751,
+      "75": 102.458132,
+      "95": 116.478295,
+      "97.5": 122.470471,
+      "100": 155.604369
+    },
+    "contrast_std": {
+      "0": 5.846082,
+      "2.5": 9.962538,
+      "5": 10.767195,
+      "25": 14.384774,
+      "50": 17.525069,
+      "75": 20.745767,
+      "95": 29.28119,
+      "97.5": 33.650574,
+      "100": 55.855391
+    },
+    "sharpness_laplacian_variance": {
+      "0": 3.898229,
+      "2.5": 7.829586,
+      "5": 9.155742,
+      "25": 15.8395,
+      "50": 23.879371,
+      "75": 46.829319,
+      "95": 64.120727,
+      "97.5": 69.270839,
+      "100": 102.661589
+    },
+    "dark_pixel_fraction": {
+      "0": 0.00094,
+      "2.5": 0.001854,
+      "5": 0.001952,
+      "25": 0.002608,
+      "50": 0.005783,
+      "75": 0.010001,
+      "95": 0.105855,
+      "97.5": 0.160132,
+      "100": 0.567753
+    },
+    "bright_pixel_fraction": {
+      "0": 0.0,
+      "2.5": 0.0,
+      "5": 0.0,
+      "25": 0.0,
+      "50": 0.0,
+      "75": 9.6e-05,
+      "95": 0.004031,
+      "97.5": 0.006568,
+      "100": 0.03149
+    },
+    "retinal_field_coverage": {
+      "0": 0.353912,
+      "2.5": 0.35681,
+      "5": 0.357202,
+      "25": 0.49614,
+      "50": 0.599911,
+      "75": 0.794874,
+      "95": 0.79676,
+      "97.5": 0.79718,
+      "100": 0.805721
+    }
+  },
+  "review_limits": {
+    "brightness_low": 44.917819,
+    "brightness_high": 122.470471,
+    "contrast_low": 9.962538,
+    "sharpness_low": 9.155742,
+    "coverage_low": 0.35681
+  },
+  "flag_counts": {
+    "HIGH_BRIGHTNESS": 88,
+    "LOW_BRIGHTNESS": 88,
+    "LOW_CONTRAST": 88,
+    "LOW_RETINAL_COVERAGE": 88,
+    "LOW_SHARPNESS": 176
+  },
+  "images_requiring_manual_review": 449,
+  "interpretation": "Flags identify distribution-based review candidates and do not establish clinical image gradability."
+}

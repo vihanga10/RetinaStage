@@ -8,7 +8,7 @@
 ## Next tasks
 - [x] Verify image readability and dimensions
 - [x] Detect exact duplicate images
-- [ ] Review image quality
+- [x] Review image quality
 - [x] Save reproducible image audit script and results
 - [x] Create auditable dataset preparation manifest
 - [ ] Detect and review visually similar images

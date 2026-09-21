@@ -1,0 +1,25 @@
+Measured 250/3504
+Measured 500/3504
+Measured 750/3504
+Measured 1000/3504
+Measured 1250/3504
+Measured 1500/3504
+Measured 1750/3504
+Measured 2000/3504
+Measured 2250/3504
+Measured 2500/3504
+Measured 2750/3504
+Measured 3000/3504
+Measured 3250/3504
+Measured 3500/3504
+Measured 3504/3504
+
+IMAGE QUALITY AUDIT
+Eligible images: 3504
+Successfully measured: 3504
+Images requiring manual review: 449
+Flag counts: {'HIGH_BRIGHTNESS': 88, 'LOW_BRIGHTNESS': 88, 'LOW_CONTRAST': 88, 'LOW_RETINAL_COVERAGE': 88, 'LOW_SHARPNESS': 176}
+Review limits: {'brightness_low': 44.917819, 'brightness_high': 122.470471, 'contrast_low': 9.962538, 'sharpness_low': 9.155742, 'coverage_low': 0.35681}
+Metrics: /Users/vihangamadushamini/RetinaStage/results/quality/image_quality_metrics.csv
+Summary: /Users/vihangamadushamini/RetinaStage/results/quality/image_quality_summary.json
+Plot: /Users/vihangamadushamini/RetinaStage/results/quality/quality_distributions.png

@@ -110,3 +110,32 @@ Eligible class distribution:
 The manifest retains one deterministic representative from each identical
 same-label group and excludes every member of an identical-image group when
 its labels conflict. Raw files are preserved and are never overwritten.
+
+## Image-quality audit
+
+Technical quality measurements were calculated for all 3,504 eligible images
+using a standardised 512-pixel representation.
+
+| Quality result | Count |
+|---|---:|
+| Successfully measured | 3,504 |
+| Images with one or more review flags | 449 |
+| Low-brightness flags | 88 |
+| High-brightness flags | 88 |
+| Low-contrast flags | 88 |
+| Low-sharpness flags | 176 |
+| Low-retinal-coverage flags | 88 |
+
+The limits are dataset-derived percentiles for manual review. They are not
+clinical gradability thresholds. Visual review found exposure, contrast,
+sharpness, colour and framing variation, but did not justify automatic
+exclusion of the flagged records.
+
+The lowest retinal-coverage examples were predominantly Grade 0 images with
+smaller retinal circles and larger black borders. This suggests a possible
+acquisition-related shortcut. Retinal-field cropping, aspect-ratio-preserving
+padding and resizing will therefore be evaluated against ordinary full-image
+resizing.
+
+Quality measurements will also support input warnings, robustness analysis
+and error analysis after model training.
