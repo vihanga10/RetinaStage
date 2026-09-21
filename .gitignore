@@ -1,0 +1,29 @@
+# Datasets and archives
+/data/
+*.zip
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Model weights and checkpoints
+/checkpoints/
+/models/
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.keras
+*.onnx
+
+# Credentials
+.env
+.env.*
+!.env.example
+kaggle.json
+
+# macOS metadata
+.DS_Store
