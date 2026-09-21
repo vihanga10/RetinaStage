@@ -185,3 +185,31 @@ threshold choices have been completed.
 The source data does not provide explicit patient identifiers. Therefore,
 patient-level separation cannot be confirmed, although exact and reviewed
 near-duplicate images were handled before splitting.
+
+## Preprocessing pipeline
+
+The reusable preprocessing module implements:
+
+1. Retinal-field estimation using thresholding and connected components.
+2. Cropping with a safety margin.
+3. Aspect-ratio-preserving square padding.
+4. Resizing to 224 × 224 pixels.
+5. Optional CLAHE on the LAB lightness channel.
+6. Optional mild unsharp masking.
+
+Visual review across all five disease grades confirmed that retinal-field
+cropping preserved the visible retinal content while reducing acquisition-
+related framing differences.
+
+Three configurations will be compared experimentally:
+
+| ID | Configuration |
+|---|---|
+| P0 | Retinal crop, square padding and resizing |
+| P1 | P0 plus CLAHE |
+| P2 | P1 plus mild unsharp masking |
+
+CLAHE improved visibility in darker examples but also amplified texture and
+changed image appearance. Unsharp masking provided limited additional visual
+benefit and sometimes strengthened noise. Final selection will therefore use
+validation-set evidence rather than visual preference.

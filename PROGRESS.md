@@ -13,7 +13,8 @@
 - [x] Create auditable dataset preparation manifest
 - [x] Detect and review visually similar images
 - [x] Create and freeze dataset splits
-- [ ] Implement baseline preprocessing and CNN
+- [x] Implement and visually review preprocessing pipeline
+- [ ] Implement baseline CNN
 - [ ] Evaluate augmentation and class balancing
 - [ ] Compare preprocessing and model experiments
 - [ ] Evaluate ordinal loss
