@@ -1,0 +1,12 @@
+left_image_id,left_diagnosis,right_image_id,right_diagnosis,hamming_distance,same_label
+16ce555748d8,4,4d9fc85a8259,3,0,NO
+2b48daf24be0,3,9a94e0316ee3,3,0,YES
+33778d136069,3,4ccfa0b4e96c,4,0,NO
+3b018e8b7303,3,3ddb86eb530e,2,0,NO
+8688f3d0fcaf,3,bfefa7344e7d,4,0,NO
+b019a49787c1,3,e1fb532f55df,3,0,YES
+0243404e8a00,4,3b018e8b7303,3,2,NO
+0243404e8a00,4,3ddb86eb530e,2,2,NO
+2f284b6a1940,4,bb5083fae98f,3,2,NO
+3435fd8675a2,3,c62585bd68fb,4,2,NO
+cd93a472e5cd,4,d035c2bd9104,3,4,NO

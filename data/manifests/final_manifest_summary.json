@@ -1,0 +1,20 @@
+{
+  "original_records": 3662,
+  "confirmed_candidate_pairs": 11,
+  "confirmed_connected_groups": 9,
+  "decision_counts": {
+    "EXCLUDE_CONFLICTING_LABEL": 62,
+    "EXCLUDE_NEAR_DUPLICATE_CONFLICT": 15,
+    "EXCLUDE_NEAR_DUPLICATE_REDUNDANT": 2,
+    "EXCLUDE_REDUNDANT_DUPLICATE": 96,
+    "INCLUDE": 3487
+  },
+  "eligible_records": 3487,
+  "eligible_class_counts": {
+    "0": 1796,
+    "1": 338,
+    "2": 921,
+    "3": 168,
+    "4": 264
+  }
+}

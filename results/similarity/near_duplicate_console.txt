@@ -1,0 +1,33 @@
+Hashed 250/3504
+Hashed 500/3504
+Hashed 750/3504
+Hashed 1000/3504
+Hashed 1250/3504
+Hashed 1500/3504
+Hashed 1750/3504
+Hashed 2000/3504
+Hashed 2250/3504
+Hashed 2500/3504
+Hashed 2750/3504
+Hashed 3000/3504
+Hashed 3250/3504
+Hashed 3500/3504
+Hashed 3504/3504
+Compared 500/3504 hashes
+Compared 1000/3504 hashes
+Compared 1500/3504 hashes
+Compared 2000/3504 hashes
+Compared 2500/3504 hashes
+Compared 3000/3504 hashes
+Compared 3500/3504 hashes
+
+NEAR-DUPLICATE SCREEN
+Eligible images: 3504
+Hash bits: 256
+Candidate threshold: 12
+Closest observed distance: 0
+Candidate pairs: 11
+Same-label candidates: 2
+Different-label candidates: 9
+Candidates: /Users/vihangamadushamini/RetinaStage/results/similarity/near_duplicate_candidates.csv
+Summary: /Users/vihangamadushamini/RetinaStage/results/similarity/near_duplicate_summary.json

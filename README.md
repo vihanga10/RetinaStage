@@ -139,3 +139,25 @@ resizing.
 
 Quality measurements will also support input warnings, robustness analysis
 and error analysis after model training.
+
+## Perceptual near-duplicate review
+
+A 256-bit perceptual-hash screen was applied after retinal-field cropping to
+the 3,504 records retained by the exact-duplicate audit.
+
+| Result | Count |
+|---|---:|
+| Candidate pairs | 11 |
+| Unique candidate images | 19 |
+| Connected near-duplicate groups | 9 |
+| Same-label redundant images excluded | 2 |
+| Conflicting-label near-duplicates excluded | 15 |
+| Final eligible modelling records | 3,487 |
+
+All candidate pairs were inspected side by side. Confirmed pairs shared the
+same retinal structure and differed through small image transformations or
+processing differences. Connected pairs were handled as groups.
+
+Every member of a conflicting-label group was excluded. For a same-label
+group, one deterministic representative was retained. No original file or
+source label was changed.

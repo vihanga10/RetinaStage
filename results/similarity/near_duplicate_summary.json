@@ -1,0 +1,11 @@
+{
+  "eligible_images": 3504,
+  "hash_algorithm": "pHash",
+  "hash_bits": 256,
+  "candidate_distance_threshold": 12,
+  "closest_observed_distance": 0,
+  "candidate_pair_count": 11,
+  "same_label_candidate_pairs": 2,
+  "different_label_candidate_pairs": 9,
+  "interpretation": "Perceptual-hash matches are review candidates and are not proof that two images show the same retinal photograph."
+}
