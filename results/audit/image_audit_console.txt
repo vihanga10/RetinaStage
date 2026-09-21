@@ -1,0 +1,26 @@
+Checked 250/3662
+Checked 500/3662
+Checked 750/3662
+Checked 1000/3662
+Checked 1250/3662
+Checked 1500/3662
+Checked 1750/3662
+Checked 2000/3662
+Checked 2250/3662
+Checked 2500/3662
+Checked 2750/3662
+Checked 3000/3662
+Checked 3250/3662
+Checked 3500/3662
+Checked 3662/3662
+
+AUDIT RESULTS
+Images examined: 3662
+Successfully decoded: 3662
+Unreadable images: 0
+Colour modes: {'RGB': 3662}
+Distinct dimensions: 17
+Identical-file groups: 123
+Identical-RGB-pixel groups: 123
+Duplicate groups with conflicting labels: 30
+Detailed results: /Users/vihangamadushamini/RetinaStage/results/audit/image_audit.json

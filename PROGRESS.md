@@ -6,10 +6,10 @@
 - [x] Match CSV identifiers to image filenames
 
 ## Next tasks
-- [ ] Verify image readability and dimensions
-- [ ] Detect exact and near-duplicate images
+- [x] Verify image readability and dimensions
+- [x] Detect exact duplicate images
 - [ ] Review image quality
-- [ ] Save reproducible audit scripts and results
+- [x] Save reproducible image audit script and results
 - [ ] Create and freeze dataset splits
 - [ ] Implement baseline preprocessing and CNN
 - [ ] Evaluate augmentation and class balancing

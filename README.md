@@ -52,3 +52,35 @@ video will be linked here when available.
 Educational research prototype; not validated for clinical use.
 
 See PROGRESS.md for the development checklist.
+
+## Image integrity audit
+
+All 3,662 labelled files were decoded successfully using Pillow.
+
+| Audit check | Result |
+|---|---:|
+| Successfully decoded images | 3,662 |
+| Unreadable images | 0 |
+| RGB images | 3,662 |
+| Distinct image dimensions | 17 |
+| Identical-image groups | 123 |
+| Images in identical-image groups | 251 |
+| Redundant copies | 128 |
+| Conflicting-label duplicate groups | 30 |
+| Images in conflicting-label groups | 62 |
+
+The audit identified identical retinal images stored under different
+identifiers. Thirty duplicate groups contain conflicting diagnosis labels.
+
+Planned handling:
+
+- Preserve the complete original dataset in `data/raw`.
+- Exclude all conflicting-label groups from supervised modelling.
+- Retain one deterministic representative from each same-label duplicate group.
+- Record every inclusion and exclusion decision in a preparation manifest.
+- Create dataset splits only after duplicate handling, preventing identical
+  images from crossing training, validation and test partitions.
+
+The audit does not establish that the remaining medical labels are clinically
+correct. It identifies technical duplication and direct conflicts in the
+provided labels.
