@@ -29,3 +29,8 @@ kaggle.json
 
 # macOS metadata
 .DS_Store
+
+# Generated models and temporary training artifacts
+/artifacts/
+*.keras
+*.h5
