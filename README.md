@@ -74,6 +74,7 @@ python scripts/calibrate_model.py
 python scripts/evaluate_final_test.py
 python scripts/generate_gradcam.py
 python scripts/analyze_test_errors.py
+python scripts/evaluate_robustness.py
 ```
 
 `evaluate_final_test.py` creates a completion marker and refuses a second run.
@@ -86,6 +87,10 @@ checks with:
 ```bash
 python -m unittest discover -s tests -v
 ```
+
+The robustness command uses validation images only. It applies fixed,
+deterministic brightness, contrast, blur, noise, and JPEG perturbations to the
+selected model without retraining or changing the calibration policy.
 
 ## Results and deliverables
 

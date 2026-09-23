@@ -20,5 +20,7 @@
 - [x] Evaluate ordinal loss
 - [x] Add calibration, quality checks and explanations
 - [x] Complete final evaluation
+- [x] Implement validation-only robustness workflow
+- [ ] Execute robustness analysis with the fixed selected model
 - [ ] Build and demonstrate the prototype
 - [ ] Complete the report and hosted video

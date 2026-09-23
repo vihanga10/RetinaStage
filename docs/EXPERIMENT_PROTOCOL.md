@@ -24,8 +24,9 @@ hyperparameters, calibration, or the uncertainty threshold.
    reporting quadratic weighted kappa and grade MAE.
 5. Freeze the selected checkpoint.
 6. Fit temperature scaling and the confidence threshold on calibration data.
-7. Evaluate the test split once and write the completion marker.
-8. Perform Grad-CAM and quantitative error analysis without changing the
+7. Evaluate fixed-severity robustness conditions on validation data only.
+8. Evaluate the test split once and write the completion marker.
+9. Perform Grad-CAM and quantitative error analysis without changing the
    selected model or policy.
 
 ## Selection rationale
@@ -49,7 +50,13 @@ python scripts/evaluate_checkpoint.py \
   artifacts/training/ordinal_stage2/best_macro_f1_model.keras \
   --output-directory artifacts/evaluation/ordinal_validation
 python scripts/calibrate_model.py
+python scripts/evaluate_robustness.py
 ```
+
+The robustness analysis declares all perturbation severities in code before
+execution and uses the fixed selected checkpoint, temperature, and confidence
+threshold. It reports metric changes relative to clean validation images. The
+conditions are controlled sensitivity probes, not clinical quality standards.
 
 The following command is documented for a fresh reproduction only. It must
 not be rerun to tune the completed coursework experiment:
@@ -75,6 +82,8 @@ python scripts/analyze_test_errors.py
   stable than the No DR result.
 - Grad-CAM is a qualitative attention visualisation and not validated lesion
   localisation.
+- Synthetic brightness, contrast, blur, noise, and JPEG perturbations do not
+  reproduce every real camera, acquisition, or pathology-related variation.
 - The uncertainty policy is an experimental abstention mechanism, not a
   clinical referral rule.
 - The system is an educational prototype and is not clinically validated.
