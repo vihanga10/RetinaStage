@@ -1,0 +1,71 @@
+{
+  "dataset": "APTOS 2019 Blindness Detection",
+  "split_manifest_sha256": "b2024cba2260e0d3470a37f744f341db3a45451ffe2490ae351dbaf6da5ee211",
+  "random_seed": 20260921,
+  "selection_protocol": "All model and threshold choices used validation or calibration data only. The test split was evaluated once after choices were frozen.",
+  "validation_experiments": {
+    "frozen_baseline": {
+      "accuracy": 0.7533460803059273,
+      "macro_f1": 0.5748627751923265,
+      "quadratic_weighted_kappa": 0.8401902047963195,
+      "grade_mae": 0.3231357552581262
+    },
+    "cross_entropy_fine_tuning": {
+      "accuracy": 0.7934990439770554,
+      "macro_f1": 0.5651892916411108,
+      "quadratic_weighted_kappa": 0.8406016885622642,
+      "grade_mae": 0.2829827915869981
+    },
+    "selected_hybrid_ordinal": {
+      "checkpoint_rule": "maximum validation macro F1",
+      "accuracy": 0.7839388145315488,
+      "macro_f1": 0.589137,
+      "quadratic_weighted_kappa": 0.843015,
+      "grade_mae": 0.294455,
+      "severe_recall": 0.24,
+      "proliferative_dr_recall": 0.45
+    }
+  },
+  "final_locked_test": {
+    "records": 523,
+    "accuracy": 0.7667,
+    "macro_precision": 0.5796,
+    "macro_recall": 0.6095,
+    "macro_f1": 0.5833,
+    "weighted_f1": 0.7724,
+    "quadratic_weighted_kappa": 0.8348,
+    "grade_mae": 0.3212,
+    "within_one_grade_accuracy": 0.9273,
+    "distant_error_rate": 0.0727,
+    "class_recall": {
+      "no_dr": 0.9554,
+      "mild": 0.7255,
+      "moderate": 0.6014,
+      "severe": 0.44,
+      "proliferative_dr": 0.325
+    }
+  },
+  "test_calibration": {
+    "temperature_fitted_on_calibration_split": 1.168353,
+    "raw_nll": 0.6085,
+    "scaled_nll": 0.5995,
+    "raw_ece": 0.0595,
+    "scaled_ece": 0.0564,
+    "raw_brier": 0.3279,
+    "scaled_brier": 0.3262
+  },
+  "uncertainty_policy": {
+    "confidence_threshold": 0.5508,
+    "threshold_source": "20th percentile of calibrated confidence on the calibration split",
+    "coverage": 0.7725,
+    "abstention_rate": 0.2275,
+    "selective_accuracy": 0.8342,
+    "uncertain_subset_accuracy": 0.5378
+  },
+  "limitations": [
+    "The dataset does not provide patient identifiers, so patient-level separation cannot be confirmed.",
+    "Severe and proliferative DR have small support and remain difficult classes.",
+    "Grad-CAM is qualitative and is not validated lesion localisation.",
+    "This educational prototype is not validated for clinical use."
+  ]
+}

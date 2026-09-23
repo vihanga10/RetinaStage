@@ -14,11 +14,11 @@
 - [x] Detect and review visually similar images
 - [x] Create and freeze dataset splits
 - [x] Implement and visually review preprocessing pipeline
-- [ ] Implement baseline CNN
-- [ ] Evaluate augmentation and class balancing
-- [ ] Compare preprocessing and model experiments
-- [ ] Evaluate ordinal loss
-- [ ] Add calibration, quality checks and explanations
-- [ ] Complete final evaluation
+- [x] Implement baseline CNN
+- [x] Evaluate augmentation and class balancing
+- [x] Compare preprocessing and model experiments
+- [x] Evaluate ordinal loss
+- [x] Add calibration, quality checks and explanations
+- [x] Complete final evaluation
 - [ ] Build and demonstrate the prototype
 - [ ] Complete the report and hosted video

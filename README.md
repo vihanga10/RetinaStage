@@ -9,7 +9,11 @@ five-grade classification using transfer learning.
 - Batch: BSCCOMP24.2P
 
 ## Current status
-Dataset preparation is in progress. No model has been trained yet.
+
+The end-to-end experimental workflow is complete: auditable data preparation,
+frozen splits, EfficientNetB0 transfer learning, ordinary and ordinal
+fine-tuning, validation-based checkpoint selection, calibration, a locked
+one-time test evaluation, Grad-CAM, and quantitative error analysis.
 
 ## Dataset
 APTOS 2019 Blindness Detection:
@@ -29,24 +33,78 @@ The following results were obtained by running the filename check locally:
 | Unlisted images | 0 |
 | Repeated image identifiers | 0 |
 
-This checks filename correspondence only. Image readability,
-duplicate image content and image quality are not yet verified.
+This filename check was followed by the integrity, duplicate, and quality
+audits documented below.
 
-## Planned implementation
-- Reproducible dataset auditing and split creation
-- Image preprocessing and training augmentation
-- CNN transfer learning for five-grade classification
-- Evaluation and error analysis
-- Ordinal loss experiment
-- Image quality checks, confidence calibration and Grad-CAM
-- Prototype demonstration
+## Implemented workflow
+
+- Reproducible image auditing, duplicate handling, and stratified splits
+- Retinal-field cropping, aspect-ratio-preserving padding, and augmentation
+- EfficientNetB0 frozen-backbone baseline and selective fine-tuning
+- Hybrid classification/ordinal loss for distance-aware grade prediction
+- Accuracy, macro/weighted F1, per-class recall, QWK, and grade MAE
+- Temperature scaling and a calibration-only uncertainty threshold
+- Locked one-time final-test evaluation
+- Grad-CAM examples and saved-prediction error analysis
 
 ## Running the project
-Execution instructions and dependencies will be added with the code.
+
+Use Python 3.12 in a virtual environment and install the pinned dependencies:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
+
+Place the original APTOS images in `data/raw/train_images/`. The split
+manifest is tracked, but source images, checkpoints, and generated artifacts
+are intentionally excluded from Git.
+
+```bash
+python scripts/train_baseline.py
+python scripts/train_finetuned.py
+python scripts/train_ordinal.py
+
+python scripts/evaluate_checkpoint.py \
+  artifacts/training/ordinal_stage2/best_macro_f1_model.keras \
+  --output-directory artifacts/evaluation/ordinal_validation
+
+python scripts/calibrate_model.py
+python scripts/evaluate_final_test.py
+python scripts/generate_gradcam.py
+python scripts/analyze_test_errors.py
+```
+
+`evaluate_final_test.py` creates a completion marker and refuses a second run.
+This protects the test split from repeated inspection and tuning. The current
+coursework test has already been completed, so do not rerun it for further
+model decisions. See `docs/EXPERIMENT_PROTOCOL.md` for the full separation of
+train, validation, calibration, and test roles. Run the automated numerical
+checks with:
+
+```bash
+python -m unittest discover -s tests -v
+```
 
 ## Results and deliverables
-Training results, Colab notebooks, the final report and demonstration
-video will be linked here when available.
+
+| Validation experiment | Accuracy | Macro F1 | QWK | Grade MAE |
+|---|---:|---:|---:|---:|
+| Frozen baseline | 0.7533 | 0.5749 | 0.8402 | 0.3231 |
+| Cross-entropy fine-tuning | **0.7935** | 0.5652 | 0.8406 | **0.2830** |
+| Hybrid ordinal, selected | 0.7839 | **0.5891** | **0.8430** | 0.2945 |
+
+The hybrid ordinal checkpoint was selected by validation macro F1, before the
+test split was opened. On the 523-record locked test split it obtained 0.7667
+accuracy, 0.5833 macro F1, 0.8348 quadratic weighted kappa, and 0.3212 grade
+MAE. A total of 92.73% of predictions were within one grade of the reference.
+
+After temperature scaling, test NLL changed from 0.6085 to 0.5995 and ECE from
+0.0595 to 0.0564. The fixed uncertainty policy covered 77.25% of test records
+at 83.42% selective accuracy. See
+`results/model_evaluation/experiment_summary.json` for the complete tracked
+summary and explicit limitations.
 
 ## Intended use
 Educational research prototype; not validated for clinical use.
@@ -201,7 +259,7 @@ Visual review across all five disease grades confirmed that retinal-field
 cropping preserved the visible retinal content while reducing acquisition-
 related framing differences.
 
-Three configurations will be compared experimentally:
+Three configurations were defined for controlled comparison:
 
 | ID | Configuration |
 |---|---|
@@ -211,5 +269,6 @@ Three configurations will be compared experimentally:
 
 CLAHE improved visibility in darker examples but also amplified texture and
 changed image appearance. Unsharp masking provided limited additional visual
-benefit and sometimes strengthened noise. Final selection will therefore use
-validation-set evidence rather than visual preference.
+benefit and sometimes strengthened noise. The final modelling pipeline used
+the conservative P0 configuration, with all selection decisions restricted to
+the validation split.
