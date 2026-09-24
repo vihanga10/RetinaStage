@@ -14,8 +14,10 @@ The end-to-end experimental workflow is complete: auditable data preparation,
 frozen splits, EfficientNetB0 transfer learning, ordinary and ordinal
 fine-tuning, validation-based checkpoint selection, calibration, a locked
 one-time test evaluation, Grad-CAM, quantitative error analysis, and
-validation-only robustness analysis. The prototype application API now wraps
-the frozen selected model, calibration policy and technical-quality checks.
+validation-only robustness analysis. The prototype application API wraps the
+frozen selected model, calibration policy and technical-quality checks. A
+React/TypeScript interface now provides image upload, calibrated probability
+display, quality warnings and auditable review information.
 
 ## Dataset
 APTOS 2019 Blindness Detection:
@@ -108,6 +110,29 @@ The API documentation is available at `http://127.0.0.1:8000/docs`. The
 prediction endpoint applies the frozen preprocessing, temperature scaling,
 confidence threshold and dataset-derived technical-quality review limits. It
 does not retrain the model or modify any experimental parameters.
+
+## Running the web interface
+
+With the API running, install and start the Vite application in a second
+terminal:
+
+```bash
+cd frontend
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+Set `VITE_API_BASE_URL` in `frontend/.env.local` if the API uses a different
+port, such as `http://127.0.0.1:8001`. Open `http://127.0.0.1:5173` to use the
+interface. It presents the five calibrated probabilities, technical-quality
+flags, confidence policy, human-review decision and traceability hashes without
+storing the uploaded image. Frontend checks are available through:
+
+```bash
+npm test
+npm run build
+```
 
 ## Results and deliverables
 

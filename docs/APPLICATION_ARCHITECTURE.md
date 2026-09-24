@@ -17,6 +17,8 @@ or use the final-test split.
 7. The frozen confidence threshold marks uncertain predictions.
 8. The response includes the grade, calibrated confidence, all five
    probabilities, technical-quality flags and a human-review decision.
+9. The React interface renders the result, policy and audit fields without
+   converting them into clinical advice.
 
 ## Safety and evidence boundaries
 
@@ -52,3 +54,29 @@ Then inspect `http://127.0.0.1:8000/docs` or call:
 ```bash
 curl http://127.0.0.1:8000/api/v1/health
 ```
+
+## Local frontend configuration
+
+The browser application is located in `frontend/`. Its only runtime
+configuration value is the API base URL:
+
+```text
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+Copy `.env.example` to `.env.local` and change the port when required. The
+FastAPI CORS configuration already permits the Vite development origins on
+port 5173.
+
+```bash
+cd frontend
+npm install
+npm test
+npm run build
+npm run dev
+```
+
+The interface contains no model parameters. It sends a multipart image to the
+API and renders the returned evidence. Grad-CAM and RetinaGuide remain separate
+future endpoints so that explanation features cannot silently alter the fixed
+inference result.
