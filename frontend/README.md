@@ -38,3 +38,8 @@ The browser displays the API response; it does not train the model, recalibrate
 probabilities, change the uncertainty threshold or save uploaded images. A
 quality warning or uncertain result triggers human review. The interface is an
 educational research prototype and is not a medical diagnostic system.
+
+After a prediction succeeds, the browser requests Grad-CAM evidence for the
+returned grade from `/api/v1/explain`. The heatmap and overlay represent the
+processed 224-pixel model input. They indicate associations in the fixed model
+and must not be interpreted as lesion localization, causality, or diagnosis.

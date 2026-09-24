@@ -17,7 +17,8 @@ one-time test evaluation, Grad-CAM, quantitative error analysis, and
 validation-only robustness analysis. The prototype application API wraps the
 frozen selected model, calibration policy and technical-quality checks. A
 React/TypeScript interface now provides image upload, calibrated probability
-display, quality warnings and auditable review information.
+display, quality warnings, auditable review information, and Grad-CAM
+attention evidence for the predicted grade.
 
 ## Dataset
 APTOS 2019 Blindness Detection:
@@ -127,7 +128,10 @@ Set `VITE_API_BASE_URL` in `frontend/.env.local` if the API uses a different
 port, such as `http://127.0.0.1:8001`. Open `http://127.0.0.1:5173` to use the
 interface. It presents the five calibrated probabilities, technical-quality
 flags, confidence policy, human-review decision and traceability hashes without
-storing the uploaded image. Frontend checks are available through:
+storing the uploaded image. After prediction, the interface requests a
+Grad-CAM heatmap and overlay from `/api/v1/explain`. This qualitative evidence
+uses the fixed predicted grade and does not alter calibration, uncertainty, or
+review decisions. Frontend checks are available through:
 
 ```bash
 npm test

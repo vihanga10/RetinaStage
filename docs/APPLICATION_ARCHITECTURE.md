@@ -17,7 +17,9 @@ or use the final-test split.
 7. The frozen confidence threshold marks uncertain predictions.
 8. The response includes the grade, calibrated confidence, all five
    probabilities, technical-quality flags and a human-review decision.
-9. The React interface renders the result, policy and audit fields without
+9. The interface requests Grad-CAM for the returned grade. The API generates
+   a heatmap and overlay from the processed model input, entirely in memory.
+10. The React interface renders the result, explanation, policy and audit fields without
    converting them into clinical advice.
 
 ## Safety and evidence boundaries
@@ -27,7 +29,9 @@ or use the final-test split.
 - An uncertain result or any quality flag requires human review.
 - Input and model SHA-256 values support traceability.
 - Uploaded images are processed in memory and are not stored by the API.
-- Grad-CAM and RetinaGuide will be connected in later application stages.
+- Grad-CAM is qualitative attention evidence, not lesion localization or
+  clinical evidence. Its failure does not remove an otherwise valid prediction.
+- RetinaGuide will be connected in a later application stage.
 
 ## Local API configuration
 
@@ -76,7 +80,8 @@ npm run build
 npm run dev
 ```
 
-The interface contains no model parameters. It sends a multipart image to the
-API and renders the returned evidence. Grad-CAM and RetinaGuide remain separate
-future endpoints so that explanation features cannot silently alter the fixed
-inference result.
+The interface contains no model parameters. It sends a multipart image first
+to `/api/v1/predict` and then to `/api/v1/explain` using the returned grade as
+the explanation target. Keeping the endpoints separate ensures explanation
+failure cannot silently alter or erase the fixed inference result. RetinaGuide
+remains a separate future endpoint.
