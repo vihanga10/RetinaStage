@@ -51,3 +51,15 @@ export interface PredictionResponse {
   policy: InferencePolicy;
   educational_notice: string;
 }
+
+export interface ExplanationResponse {
+  input_sha256: string;
+  model_sha256: string;
+  target_grade: number;
+  target_label: string;
+  backbone_layer: string;
+  input_space: string;
+  heatmap_data_url: string;
+  overlay_data_url: string;
+  interpretation: string;
+}
