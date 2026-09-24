@@ -1,5 +1,8 @@
 """Grad-CAM helpers for the fixed final RetinaStage model."""
 
+from __future__ import annotations
+
+import base64
 from pathlib import Path
 
 import cv2
@@ -63,14 +66,18 @@ def create_gradcam_heatmap(
     if gradients is None:
         raise RuntimeError("Gradients could not be calculated")
     pooled_gradients = tf.reduce_mean(gradients, axis=(0, 1, 2))
-    heatmap = tf.reduce_sum(
-        feature_maps[0] * pooled_gradients,
-        axis=-1,
-    )
+    heatmap = tf.reduce_sum(feature_maps[0] * pooled_gradients, axis=-1)
     heatmap = tf.maximum(heatmap, 0)
     maximum = tf.reduce_max(heatmap)
     heatmap = tf.where(maximum > 0, heatmap / maximum, heatmap)
     return heatmap.numpy()
+
+
+def colourise_heatmap(heatmap: np.ndarray) -> np.ndarray:
+    """Convert a normalized heatmap to an RGB turbo-colour image."""
+
+    clipped = np.clip(np.asarray(heatmap, dtype=np.float32), 0.0, 1.0)
+    return plt.get_cmap("turbo")(clipped)[..., :3]
 
 
 def create_overlay(
@@ -81,11 +88,13 @@ def create_overlay(
 ) -> tuple[np.ndarray, np.ndarray]:
     """Resize a heatmap and blend it with its model input image."""
 
+    if not 0.0 <= image_weight <= 1.0:
+        raise ValueError("image_weight must be between 0 and 1")
     height, width = image_array.shape[:2]
     resized = tf.image.resize(
         heatmap[..., np.newaxis], (height, width)
     ).numpy().squeeze()
-    coloured = plt.get_cmap("turbo")(resized)[..., :3]
+    coloured = colourise_heatmap(resized)
     normalised = np.clip(image_array / 255.0, 0, 1)
     overlay = np.clip(
         image_weight * normalised + (1.0 - image_weight) * coloured,
@@ -93,3 +102,20 @@ def create_overlay(
         1,
     )
     return resized, overlay
+
+
+def encode_rgb_png_data_url(image_rgb: np.ndarray) -> str:
+    """Encode a float or uint8 RGB image as an in-memory PNG data URL."""
+
+    image = np.asarray(image_rgb)
+    if image.ndim != 3 or image.shape[2] != 3:
+        raise ValueError("PNG data URL input must have shape (H, W, 3)")
+    if np.issubdtype(image.dtype, np.floating):
+        image = np.clip(image, 0.0, 1.0) * 255.0
+    image_u8 = np.clip(image, 0, 255).astype(np.uint8)
+    image_bgr = cv2.cvtColor(image_u8, cv2.COLOR_RGB2BGR)
+    success, encoded = cv2.imencode(".png", image_bgr)
+    if not success:
+        raise RuntimeError("Grad-CAM image could not be encoded")
+    payload = base64.b64encode(encoded.tobytes()).decode("ascii")
+    return f"data:image/png;base64,{payload}"
