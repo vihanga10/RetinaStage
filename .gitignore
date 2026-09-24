@@ -34,3 +34,10 @@ kaggle.json
 /artifacts/
 *.keras
 *.h5
+
+# Frontend dependencies, builds and local configuration
+/frontend/node_modules/
+/frontend/dist/
+/frontend/coverage/
+/frontend/.env.local
+/frontend/.env.*.local
