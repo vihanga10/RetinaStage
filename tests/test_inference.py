@@ -84,6 +84,15 @@ class InferenceTests(unittest.TestCase):
             1.0,
         )
 
+    def test_invalid_explanation_target_is_rejected_early(self) -> None:
+        predictor = RetinaStagePredictor(
+            model=FakeModel(),
+            policy=InferencePolicy(temperature=1.0, confidence_threshold=0.5),
+            quality_limits=self.limits,
+        )
+        with self.assertRaisesRegex(ValueError, "0 to 4"):
+            predictor.explain_bytes(self.image_bytes, 5)
+
 
 if __name__ == "__main__":
     unittest.main()
