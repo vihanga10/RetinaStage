@@ -13,7 +13,9 @@ five-grade classification using transfer learning.
 The end-to-end experimental workflow is complete: auditable data preparation,
 frozen splits, EfficientNetB0 transfer learning, ordinary and ordinal
 fine-tuning, validation-based checkpoint selection, calibration, a locked
-one-time test evaluation, Grad-CAM, and quantitative error analysis.
+one-time test evaluation, Grad-CAM, quantitative error analysis, and
+validation-only robustness analysis. The prototype application API now wraps
+the frozen selected model, calibration policy and technical-quality checks.
 
 ## Dataset
 APTOS 2019 Blindness Detection:
@@ -91,6 +93,21 @@ python -m unittest discover -s tests -v
 The robustness command uses validation images only. It applies fixed,
 deterministic brightness, contrast, blur, noise, and JPEG perturbations to the
 selected model without retraining or changing the calibration policy.
+
+## Running the application API
+
+Restore the selected model and calibration summary to the default artifact
+locations documented in `docs/APPLICATION_ARCHITECTURE.md`, then run:
+
+```bash
+python -m pip install -r requirements-app.txt
+PYTHONPATH=src uvicorn app.api.main:app --reload
+```
+
+The API documentation is available at `http://127.0.0.1:8000/docs`. The
+prediction endpoint applies the frozen preprocessing, temperature scaling,
+confidence threshold and dataset-derived technical-quality review limits. It
+does not retrain the model or modify any experimental parameters.
 
 ## Results and deliverables
 

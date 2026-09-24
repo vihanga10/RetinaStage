@@ -21,6 +21,9 @@
 - [x] Add calibration, quality checks and explanations
 - [x] Complete final evaluation
 - [x] Implement validation-only robustness workflow
-- [ ] Execute robustness analysis with the fixed selected model
+- [x] Execute robustness analysis with the fixed selected model
+- [x] Implement frozen-model inference and technical-quality API foundation
+- [ ] Connect Grad-CAM and RetinaGuide application endpoints
+- [ ] Build the React/TypeScript user interface
 - [ ] Build and demonstrate the prototype
 - [ ] Complete the report and hosted video

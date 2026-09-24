@@ -1,0 +1,54 @@
+# RetinaStage application architecture
+
+The application layer wraps the fixed, selected experiment checkpoint. It
+does not retrain the model, fit calibration, change the uncertainty threshold,
+or use the final-test split.
+
+## Request flow
+
+1. The browser uploads one PNG or JPEG retinal photograph.
+2. The API validates the file type, byte size and decoded dimensions.
+3. Technical quality measurements are compared with the dataset-derived audit
+   limits. Flags request review; they do not declare clinical gradability.
+4. The image follows the same retinal-field crop, square padding and 224-pixel
+   resizing used during training and evaluation.
+5. The selected EfficientNetB0 checkpoint produces five class probabilities.
+6. The frozen temperature scales the probabilities.
+7. The frozen confidence threshold marks uncertain predictions.
+8. The response includes the grade, calibrated confidence, all five
+   probabilities, technical-quality flags and a human-review decision.
+
+## Safety and evidence boundaries
+
+- This is an educational research prototype, not a clinical diagnostic tool.
+- Quality flags are dataset-relative technical warnings.
+- An uncertain result or any quality flag requires human review.
+- Input and model SHA-256 values support traceability.
+- Uploaded images are processed in memory and are not stored by the API.
+- Grad-CAM and RetinaGuide will be connected in later application stages.
+
+## Local API configuration
+
+The default artifact locations are:
+
+```text
+artifacts/training/ordinal_stage2/best_macro_f1_model.keras
+artifacts/calibration/selected_ordinal_model/calibration_summary.json
+results/quality/image_quality_summary.json
+```
+
+They can be overridden with `RETINASTAGE_MODEL_PATH`,
+`RETINASTAGE_CALIBRATION_PATH` and `RETINASTAGE_QUALITY_SUMMARY_PATH`.
+
+Install and run from the repository root:
+
+```bash
+python -m pip install -r requirements-app.txt
+PYTHONPATH=src uvicorn app.api.main:app --reload
+```
+
+Then inspect `http://127.0.0.1:8000/docs` or call:
+
+```bash
+curl http://127.0.0.1:8000/api/v1/health
+```
