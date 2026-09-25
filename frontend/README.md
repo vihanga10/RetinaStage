@@ -49,3 +49,9 @@ RetinaGuide sends the user's question and the current prediction JSON to
 deterministic and limited to the displayed grade, probabilities, confidence,
 review decision, technical-quality fields and Grad-CAM limitations. Requests
 for diagnosis or treatment are declined with the research safety boundary.
+The conversation log scrolls internally to the newest message so longer chats
+do not move or obscure the result sections around it.
+
+The response engine's fixed evaluation is run from the repository root with
+`python scripts/evaluate_retinaguide.py`. It tests controlled prediction JSON,
+not retinal images or model predictions; see `docs/RETINAGUIDE_EVALUATION.md`.

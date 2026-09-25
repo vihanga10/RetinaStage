@@ -94,3 +94,25 @@ failure cannot silently alter or erase the fixed inference result. The browser
 sends only a question and current prediction JSON to `/api/v1/retinaguide`.
 The chatbot response includes its detected intent, grounded field names,
 suggested follow-up questions and an explicit safety notice.
+
+## RetinaGuide response-layer evaluation
+
+The deterministic chatbot can be evaluated without loading TensorFlow or
+opening any retinal image:
+
+```bash
+python scripts/evaluate_retinaguide.py
+```
+
+The runner applies 15 fixed prompts to three controlled prediction contexts
+covering a confident result, a low-confidence result and a technical-quality
+review. It verifies intent selection, the exact grounded fields, required
+answer content, identical repeated responses and explicit refusal of diagnosis,
+treatment and medication requests. It writes row-level CSV evidence and a JSON
+summary to `results/retinaguide_evaluation/`.
+
+This evaluation deliberately does not use the retinal dataset, the trained
+model, the calibration split or the final-test split. It establishes the
+behaviour of the result-explanation layer only; it does not add evidence about
+clinical validity or classifier performance. The complete protocol and results
+are documented in `docs/RETINAGUIDE_EVALUATION.md`.
