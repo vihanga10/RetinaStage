@@ -25,6 +25,7 @@
 - [x] Implement frozen-model inference and technical-quality API foundation
 - [x] Connect the Grad-CAM application endpoint and evidence panel
 - [x] Connect the grounded RetinaGuide application endpoint and chat panel
+- [x] Evaluate RetinaGuide grounding, repeatability and safety boundaries
 - [x] Build the React/TypeScript prediction user interface
 - [x] Connect and validate the user interface with an original retinal image
 - [ ] Build and demonstrate the prototype

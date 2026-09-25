@@ -137,7 +137,21 @@ The RetinaGuide panel sends a question and the current prediction response to
 `/api/v1/retinaguide`. Its deterministic response engine is grounded only in
 the returned grade, calibrated probabilities, uncertainty policy and technical
 quality fields. It does not send the image, call an external language model,
-diagnose disease or recommend treatment. Frontend checks are available through:
+diagnose disease or recommend treatment.
+
+Evaluate this response layer independently with:
+
+```bash
+python scripts/evaluate_retinaguide.py
+```
+
+The fixed 15-case matrix checks intent routing, exact field grounding, required
+answer content, repeatability and medical-safety refusals. It uses controlled
+prediction JSON only: no retinal images, model inference, final-test records or
+external language model are used. Results are written to
+`results/retinaguide_evaluation/`; this is chatbot response evidence, not a
+clinical or image-classification evaluation. Frontend checks are available
+through:
 
 ```bash
 npm test
@@ -162,6 +176,11 @@ After temperature scaling, test NLL changed from 0.6085 to 0.5995 and ECE from
 at 83.42% selective accuracy. See
 `results/model_evaluation/experiment_summary.json` for the complete tracked
 summary and explicit limitations.
+
+The RetinaGuide response-layer evaluation passed all 15 fixed cases. Intent,
+grounding, required-content, determinism and safety-compliance rates were each
+1.0000. See `docs/RETINAGUIDE_EVALUATION.md` for the method, metric definitions,
+manual end-to-end scenarios and scope limitations.
 
 ## Intended use
 Educational research prototype; not validated for clinical use.
