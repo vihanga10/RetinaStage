@@ -188,6 +188,7 @@ function RetinaGuidePanel({ result }: { result: PredictionResponse }) {
     "RetinaGuide explains only the current model result and does not provide medical advice.",
   );
   const requestRef = useRef<AbortController | null>(null);
+  const messagesRef = useRef<HTMLDivElement | null>(null);
   const messageCounter = useRef(0);
 
   useEffect(() => {
@@ -195,6 +196,13 @@ function RetinaGuidePanel({ result }: { result: PredictionResponse }) {
       requestRef.current?.abort();
     };
   }, []);
+
+  useEffect(() => {
+    const messageLog = messagesRef.current;
+    if (messageLog) {
+      messageLog.scrollTop = messageLog.scrollHeight;
+    }
+  }, [messages, loading]);
 
   function messageId(role: RetinaGuideMessage["role"]): string {
     messageCounter.current += 1;
@@ -271,6 +279,7 @@ function RetinaGuidePanel({ result }: { result: PredictionResponse }) {
         </div>
 
         <div
+          ref={messagesRef}
           className="guide-messages"
           role="log"
           aria-live="polite"

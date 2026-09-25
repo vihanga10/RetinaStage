@@ -215,7 +215,7 @@ nav a:hover::after, nav a:focus-visible::after { right: 0; }
 .guide-heading p { margin: 0; color: rgba(255,255,255,.72); font-size: 10px; }
 .guide-mark { flex: 0 0 auto; width: 35px; height: 35px; display: grid; place-items: center; border-radius: 11px; color: #d4ffbf; background: rgba(255,255,255,.12); }
 .guide-mark .icon { width: 19px; }
-.guide-messages { max-height: 330px; overflow-y: auto; padding: 16px; display: grid; gap: 10px; background: #f5f8f5; }
+.guide-messages { max-height: 330px; overflow-y: auto; padding: 16px; display: grid; gap: 10px; background: #f5f8f5; overscroll-behavior: contain; scrollbar-gutter: stable; scroll-padding-block: 16px; }
 .guide-message { max-width: 91%; padding: 10px 12px; display: grid; gap: 4px; border-radius: 13px; }
 .guide-message > span { font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .guide-message p { margin: 0; font-size: 11px; line-height: 1.55; }
