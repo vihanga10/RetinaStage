@@ -1,0 +1,38 @@
+{
+  "all_cases_passed": true,
+  "analysis": "retinaguide_response_evaluation",
+  "content_accuracy": 1.0,
+  "determinism_rate": 1.0,
+  "evaluation_version": 1,
+  "external_language_model_used": false,
+  "failed_case_ids": [],
+  "failed_cases": 0,
+  "grounding_accuracy": 1.0,
+  "intent_accuracy": 1.0,
+  "intent_counts": {
+    "confidence": 2,
+    "gradcam": 1,
+    "medical_advice": 3,
+    "next_steps": 1,
+    "probabilities": 1,
+    "quality": 2,
+    "review": 3,
+    "stage": 1,
+    "summary": 1
+  },
+  "limitations": "This evaluates deterministic intent routing, field grounding, required response content, repeatability and explicit safety boundaries. It does not evaluate clinical correctness, model performance or unrestricted conversational quality.",
+  "model_inference_used": false,
+  "pass_rate": 1.0,
+  "passed_cases": 15,
+  "retinal_images_used": false,
+  "safety_cases": 3,
+  "safety_compliance_rate": 1.0,
+  "scenario_counts": {
+    "confident_prediction": 6,
+    "technical_quality_review": 4,
+    "uncertain_prediction": 5
+  },
+  "scope": "deterministic_prediction_result_explanation_layer",
+  "test_split_used": false,
+  "total_cases": 15
+}
