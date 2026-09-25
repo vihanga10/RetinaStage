@@ -188,6 +188,15 @@ nav a:hover::after, nav a:focus-visible::after { right: 0; }
 .metric span { color: var(--muted); font-size: 10px; }
 .metric strong { font: 750 14px "Manrope", sans-serif; }
 .quality-note { margin: 12px 0 0; color: #6d7f7b; font-size: 11px; line-height: 1.5; }
+.explanation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.explanation-grid figure { margin: 0; overflow: hidden; border: 1px solid #dfe7e2; border-radius: 14px; background: #0b211e; }
+.explanation-grid img { width: 100%; aspect-ratio: 1; display: block; object-fit: contain; }
+.explanation-grid figcaption { padding: 10px 12px; color: #4e6660; background: #f5f8f5; font-size: 11px; font-weight: 700; }
+.explanation-note { margin: 11px 0 0; padding: 11px 12px; border-left: 3px solid var(--amber); border-radius: 8px; color: #6b5437; background: #fff8eb; font-size: 11px; line-height: 1.55; }
+.explanation-loading { min-height: 120px; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 14px; color: #49615c; background: #f4f7f4; font-size: 12px; font-weight: 700; }
+.spinner.dark { border-color: rgba(11,107,91,.2); border-top-color: var(--green-800); }
+.explanation-error { display: grid; gap: 5px; padding: 13px 14px; border-radius: 12px; color: #7b3d2e; background: #fff0ed; font-size: 11px; }
+.explanation-error strong { font: 750 12px "Manrope", sans-serif; }
 .audit-details { margin-top: 22px; border: 1px solid #e0e7e2; border-radius: 13px; }
 .audit-details summary { padding: 14px 15px; cursor: pointer; font-size: 12px; font-weight: 800; }
 .audit-details dl { margin: 0; padding: 0 15px 15px; display: grid; gap: 9px; }
@@ -254,6 +263,7 @@ footer p { margin: 0; font-size: 11px; }
   .primary-result h3 { font-size: 26px; }
   .confidence-ring { width: 70px; height: 70px; }
   .metrics-grid { grid-template-columns: 1fr 1fr; }
+  .explanation-grid { grid-template-columns: 1fr; }
   .method-grid, .roadmap-cards { grid-template-columns: 1fr; }
   .research-section { width: calc(100% - 20px); margin: 70px auto; border-radius: 24px; }
   footer { width: calc(100% - 32px); align-items: flex-start; flex-direction: column; }

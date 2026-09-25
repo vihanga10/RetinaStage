@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 from threading import Lock
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from retinastage.inference import RetinaStagePredictor
@@ -118,6 +118,19 @@ async def predict(
 ) -> dict[str, object]:
     """Predict one uploaded PNG or JPEG retinal photograph."""
 
+    content = await read_uploaded_image(image)
+    try:
+        predictor = get_predictor()
+        return predictor.predict_bytes(content)
+    except FileNotFoundError as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+
+
+async def read_uploaded_image(image: UploadFile) -> bytes:
+    """Validate and read one supported upload without retaining it."""
+
     if image.content_type not in ALLOWED_CONTENT_TYPES:
         raise HTTPException(
             status_code=415,
@@ -130,9 +143,20 @@ async def predict(
             status_code=413,
             detail="Uploaded image exceeds the configured size limit.",
         )
+    return content
+
+
+@app.post("/api/v1/explain")
+async def explain(
+    image: UploadFile = File(...),
+    target_grade: int = Query(..., ge=0, le=4),
+) -> dict[str, object]:
+    """Generate Grad-CAM evidence for a previously predicted grade."""
+
+    content = await read_uploaded_image(image)
     try:
         predictor = get_predictor()
-        return predictor.predict_bytes(content)
+        return predictor.explain_bytes(content, target_grade)
     except FileNotFoundError as error:
         raise HTTPException(status_code=503, detail=str(error)) from error
     except ValueError as error:

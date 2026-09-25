@@ -8,14 +8,24 @@ import {
   useState,
 } from "react";
 
-import { API_BASE_URL, fetchHealth, predictImage } from "./api";
-import type { HealthResponse, PredictionResponse } from "./types";
+import {
+  API_BASE_URL,
+  explainImage,
+  fetchHealth,
+  predictImage,
+} from "./api";
+import type {
+  ExplanationResponse,
+  HealthResponse,
+  PredictionResponse,
+} from "./types";
 import { formatFlag, formatPercent, reviewState } from "./view-model";
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024;
 const ACCEPTED_TYPES = new Set(["image/png", "image/jpeg"]);
 
 type AnalysisState = "idle" | "loading" | "complete" | "error";
+type ExplanationState = "idle" | "loading" | "complete" | "error";
 
 function Icon({ name }: { name: "eye" | "upload" | "shield" | "spark" }) {
   const paths = {
@@ -97,7 +107,75 @@ function Metric({ label, value }: { label: string; value: string }) {
   );
 }
 
-function ResultPanel({ result }: { result: PredictionResponse }) {
+function ExplanationPanel({
+  explanation,
+  state,
+  error,
+}: {
+  explanation: ExplanationResponse | null;
+  state: ExplanationState;
+  error: string | null;
+}) {
+  return (
+    <div className="result-section explanation-section">
+      <div className="subheading">
+        <h3>Grad-CAM attention evidence</h3>
+        <span>
+          {state === "complete"
+            ? `Target: Grade ${explanation?.target_grade}`
+            : "Processed model input"}
+        </span>
+      </div>
+
+      {state === "loading" && (
+        <div className="explanation-loading" role="status">
+          <span className="spinner dark" /> Generating attention maps…
+        </div>
+      )}
+
+      {state === "error" && (
+        <div className="explanation-error" role="status">
+          <strong>Prediction available; explanation unavailable.</strong>
+          <span>{error}</span>
+        </div>
+      )}
+
+      {explanation && state === "complete" && (
+        <>
+          <div className="explanation-grid">
+            <figure>
+              <img
+                src={explanation.heatmap_data_url}
+                alt={`Grad-CAM heatmap for ${explanation.target_label}`}
+              />
+              <figcaption>Attention heatmap</figcaption>
+            </figure>
+            <figure>
+              <img
+                src={explanation.overlay_data_url}
+                alt={`Grad-CAM overlay for ${explanation.target_label}`}
+              />
+              <figcaption>Heatmap over processed input</figcaption>
+            </figure>
+          </div>
+          <p className="explanation-note">{explanation.interpretation}</p>
+        </>
+      )}
+    </div>
+  );
+}
+
+function ResultPanel({
+  result,
+  explanation,
+  explanationState,
+  explanationError,
+}: {
+  result: PredictionResponse;
+  explanation: ExplanationResponse | null;
+  explanationState: ExplanationState;
+  explanationError: string | null;
+}) {
   const state = reviewState(result);
   const quality = result.quality.metrics;
   return (
@@ -143,6 +221,12 @@ function ResultPanel({ result }: { result: PredictionResponse }) {
           )}
         </div>
       </div>
+
+      <ExplanationPanel
+        explanation={explanation}
+        state={explanationState}
+        error={explanationError}
+      />
 
       <div className="result-section">
         <div className="subheading">
@@ -202,6 +286,13 @@ export default function App() {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [result, setResult] = useState<PredictionResponse | null>(null);
+  const [explanation, setExplanation] =
+    useState<ExplanationResponse | null>(null);
+  const [explanationState, setExplanationState] =
+    useState<ExplanationState>("idle");
+  const [explanationError, setExplanationError] = useState<string | null>(
+    null,
+  );
   const [analysisState, setAnalysisState] = useState<AnalysisState>("idle");
   const [message, setMessage] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -239,6 +330,9 @@ export default function App() {
   function selectFile(candidate?: File) {
     setMessage(null);
     setResult(null);
+    setExplanation(null);
+    setExplanationState("idle");
+    setExplanationError(null);
     setAnalysisState("idle");
     if (!candidate) return;
     if (!ACCEPTED_TYPES.has(candidate.type)) {
@@ -274,7 +368,32 @@ export default function App() {
     try {
       const response = await predictImage(file);
       setResult(response);
-      setAnalysisState("complete");
+      setExplanationState("loading");
+      try {
+        const explanationResponse = await explainImage(
+          file,
+          response.predicted_grade,
+        );
+        if (
+          explanationResponse.input_sha256 !== response.input_sha256 ||
+          explanationResponse.model_sha256 !== response.model_sha256
+        ) {
+          throw new Error(
+            "Explanation traceability does not match the prediction.",
+          );
+        }
+        setExplanation(explanationResponse);
+        setExplanationState("complete");
+      } catch (error) {
+        setExplanationError(
+          error instanceof Error
+            ? error.message
+            : "Grad-CAM generation failed.",
+        );
+        setExplanationState("error");
+      } finally {
+        setAnalysisState("complete");
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Analysis failed.");
       setAnalysisState("error");
@@ -285,6 +404,9 @@ export default function App() {
     setFile(null);
     setPreviewUrl(null);
     setResult(null);
+    setExplanation(null);
+    setExplanationState("idle");
+    setExplanationError(null);
     setMessage(null);
     setAnalysisState("idle");
     if (inputRef.current) inputRef.current.value = "";
@@ -408,7 +530,12 @@ export default function App() {
             </form>
 
             {result ? (
-              <ResultPanel result={result} />
+              <ResultPanel
+                result={result}
+                explanation={explanation}
+                explanationState={explanationState}
+                explanationError={explanationError}
+              />
             ) : (
               <aside className="empty-results" aria-live="polite">
                 <div className="empty-graphic"><Icon name="eye" /></div>
@@ -418,7 +545,8 @@ export default function App() {
                 <ul>
                   <li><span>01</span> Calibrated stage confidence</li>
                   <li><span>02</span> Technical-quality flags</li>
-                  <li><span>03</span> Auditable input and model hashes</li>
+                  <li><span>03</span> Grad-CAM attention evidence</li>
+                  <li><span>04</span> Auditable input and model hashes</li>
                 </ul>
               </aside>
             )}
@@ -443,10 +571,10 @@ export default function App() {
           <div>
             <span className="section-label light">Research roadmap</span>
             <h2>The evidence layer is ready for explanation.</h2>
-            <p>Grad-CAM and RetinaGuide are the next application integrations. They will explain a fixed result without changing the selected model or clinical boundary.</p>
+            <p>Grad-CAM explains the fixed result without changing the selected model or decision policy. RetinaGuide remains the next application integration.</p>
           </div>
           <div className="roadmap-cards">
-            <article><span>Available in research workflow</span><h3>Grad-CAM</h3><p>Qualitative model-attention evidence with an explicit interpretation warning.</p></article>
+            <article><span>Integrated in application</span><h3>Grad-CAM</h3><p>Qualitative model-attention evidence with an explicit interpretation warning.</p></article>
             <article><span>Next application stage</span><h3>RetinaGuide</h3><p>Plain-language explanations grounded only in the returned prediction, quality and policy fields.</p></article>
           </div>
         </section>

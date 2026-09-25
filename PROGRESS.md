@@ -23,8 +23,9 @@
 - [x] Implement validation-only robustness workflow
 - [x] Execute robustness analysis with the fixed selected model
 - [x] Implement frozen-model inference and technical-quality API foundation
-- [ ] Connect Grad-CAM and RetinaGuide application endpoints
+- [x] Connect the Grad-CAM application endpoint and evidence panel
+- [ ] Connect the RetinaGuide application endpoint
 - [x] Build the React/TypeScript prediction user interface
-- [ ] Connect and validate the user interface with an original retinal image
+- [x] Connect and validate the user interface with an original retinal image
 - [ ] Build and demonstrate the prototype
 - [ ] Complete the report and hosted video

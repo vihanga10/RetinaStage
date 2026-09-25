@@ -144,15 +144,8 @@ class RetinaStagePredictor:
 
         image_bgr = decode_image_bytes(content)
         quality = assess_quality(image_bgr, self.quality_limits)
-        processed_bgr = preprocess_image(
-            image_bgr,
-            self.preprocessing_config,
-        )
-        processed_rgb = cv2.cvtColor(
-            processed_bgr,
-            cv2.COLOR_BGR2RGB,
-        ).astype(np.float32)
-        batch = processed_rgb[np.newaxis, ...]
+        processed_rgb, batch = self._prepare_model_input(image_bgr)
+        del processed_rgb
         with self._prediction_lock:
             raw_output = self.model.predict(batch, verbose=0)
         raw_probabilities = np.asarray(raw_output, dtype=float)
@@ -203,4 +196,73 @@ class RetinaStagePredictor:
                 "confidence_threshold": self.policy.confidence_threshold,
             },
             "educational_notice": EDUCATIONAL_NOTICE,
+        }
+
+    def _prepare_model_input(
+        self,
+        image_bgr: np.ndarray,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Apply the frozen preprocessing and return RGB input plus batch."""
+
+        processed_bgr = preprocess_image(
+            image_bgr,
+            self.preprocessing_config,
+        )
+        processed_rgb = cv2.cvtColor(
+            processed_bgr,
+            cv2.COLOR_BGR2RGB,
+        ).astype(np.float32)
+        batch = processed_rgb[np.newaxis, ...]
+        return processed_rgb, batch
+
+    def explain_bytes(
+        self,
+        content: bytes,
+        target_grade: int,
+        *,
+        backbone_name: str = "efficientnetb0",
+    ) -> dict[str, object]:
+        """Return an in-memory Grad-CAM explanation for one target grade."""
+
+        if not 0 <= int(target_grade) < len(GRADE_LABELS):
+            raise ValueError("target_grade must be an integer from 0 to 4")
+        image_bgr = decode_image_bytes(content)
+        processed_rgb, batch = self._prepare_model_input(image_bgr)
+
+        # Importing here keeps health checks and ordinary predictions free of
+        # Grad-CAM's TensorFlow/matplotlib setup until an explanation is asked
+        # for explicitly.
+        import tensorflow as tf
+
+        from retinastage.explainability import (
+            colourise_heatmap,
+            create_gradcam_heatmap,
+            create_overlay,
+            encode_rgb_png_data_url,
+        )
+
+        with self._prediction_lock:
+            heatmap = create_gradcam_heatmap(
+                self.model,
+                tf.convert_to_tensor(batch),
+                int(target_grade),
+                backbone_name=backbone_name,
+            )
+        resized_heatmap, overlay = create_overlay(processed_rgb, heatmap)
+        coloured_heatmap = colourise_heatmap(resized_heatmap)
+
+        return {
+            "input_sha256": hashlib.sha256(content).hexdigest(),
+            "model_sha256": self.model_sha256,
+            "target_grade": int(target_grade),
+            "target_label": GRADE_LABELS[int(target_grade)],
+            "backbone_layer": backbone_name,
+            "input_space": "processed_224_pixel_model_input",
+            "heatmap_data_url": encode_rgb_png_data_url(coloured_heatmap),
+            "overlay_data_url": encode_rgb_png_data_url(overlay),
+            "interpretation": (
+                "Grad-CAM indicates image regions associated with the fixed "
+                "model output. It does not localize lesions, establish "
+                "causality, or provide a medical diagnosis."
+            ),
         }

@@ -1,4 +1,8 @@
-import type { HealthResponse, PredictionResponse } from "./types";
+import type {
+  ExplanationResponse,
+  HealthResponse,
+  PredictionResponse,
+} from "./types";
 
 const FALLBACK_API_URL = "http://127.0.0.1:8000";
 
@@ -47,4 +51,25 @@ export async function predictImage(
     throw new Error(await extractError(response));
   }
   return (await response.json()) as PredictionResponse;
+}
+
+export async function explainImage(
+  file: File,
+  targetGrade: number,
+  signal?: AbortSignal,
+): Promise<ExplanationResponse> {
+  const formData = new FormData();
+  formData.append("image", file);
+  const response = await fetch(
+    `${API_BASE_URL}/api/v1/explain?target_grade=${targetGrade}`,
+    {
+      method: "POST",
+      body: formData,
+      signal,
+    },
+  );
+  if (!response.ok) {
+    throw new Error(await extractError(response));
+  }
+  return (await response.json()) as ExplanationResponse;
 }
