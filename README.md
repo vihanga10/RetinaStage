@@ -131,7 +131,13 @@ flags, confidence policy, human-review decision and traceability hashes without
 storing the uploaded image. After prediction, the interface requests a
 Grad-CAM heatmap and overlay from `/api/v1/explain`. This qualitative evidence
 uses the fixed predicted grade and does not alter calibration, uncertainty, or
-review decisions. Frontend checks are available through:
+review decisions.
+
+The RetinaGuide panel sends a question and the current prediction response to
+`/api/v1/retinaguide`. Its deterministic response engine is grounded only in
+the returned grade, calibrated probabilities, uncertainty policy and technical
+quality fields. It does not send the image, call an external language model,
+diagnose disease or recommend treatment. Frontend checks are available through:
 
 ```bash
 npm test

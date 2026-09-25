@@ -63,3 +63,28 @@ export interface ExplanationResponse {
   overlay_data_url: string;
   interpretation: string;
 }
+
+export type RetinaGuideIntent =
+  | "summary"
+  | "stage"
+  | "confidence"
+  | "probabilities"
+  | "review"
+  | "quality"
+  | "gradcam"
+  | "next_steps"
+  | "medical_advice";
+
+export interface RetinaGuideResponse {
+  answer: string;
+  intent: RetinaGuideIntent;
+  grounded_fields: string[];
+  suggested_questions: string[];
+  safety_notice: string;
+}
+
+export interface RetinaGuideMessage {
+  id: string;
+  role: "assistant" | "user";
+  content: string;
+}

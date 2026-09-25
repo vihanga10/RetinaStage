@@ -10,14 +10,22 @@ import {
 
 import {
   API_BASE_URL,
+  askRetinaGuide,
   explainImage,
   fetchHealth,
   predictImage,
 } from "./api";
+import {
+  createGuideWelcome,
+  initialGuideQuestions,
+  RETINAGUIDE_MESSAGE_LIMIT,
+  validGuideMessage,
+} from "./retinaguide";
 import type {
   ExplanationResponse,
   HealthResponse,
   PredictionResponse,
+  RetinaGuideMessage,
 } from "./types";
 import { formatFlag, formatPercent, reviewState } from "./view-model";
 
@@ -165,6 +173,165 @@ function ExplanationPanel({
   );
 }
 
+function RetinaGuidePanel({ result }: { result: PredictionResponse }) {
+  const [messages, setMessages] = useState<RetinaGuideMessage[]>(() => [
+    createGuideWelcome(result),
+  ]);
+  const [suggestions, setSuggestions] = useState<string[]>(() =>
+    initialGuideQuestions(result),
+  );
+  const [draft, setDraft] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [groundedFields, setGroundedFields] = useState<string[]>([]);
+  const [safetyNotice, setSafetyNotice] = useState(
+    "RetinaGuide explains only the current model result and does not provide medical advice.",
+  );
+  const requestRef = useRef<AbortController | null>(null);
+  const messageCounter = useRef(0);
+
+  useEffect(() => {
+    return () => {
+      requestRef.current?.abort();
+    };
+  }, []);
+
+  function messageId(role: RetinaGuideMessage["role"]): string {
+    messageCounter.current += 1;
+    return `guide-${role}-${messageCounter.current}`;
+  }
+
+  async function sendQuestion(question: string) {
+    const content = question.trim();
+    if (!validGuideMessage(content) || loading) return;
+
+    setMessages((current) => [
+      ...current,
+      { id: messageId("user"), role: "user", content },
+    ]);
+    setDraft("");
+    setError(null);
+    setLoading(true);
+
+    const controller = new AbortController();
+    requestRef.current = controller;
+    try {
+      const response = await askRetinaGuide(
+        content,
+        result,
+        controller.signal,
+      );
+      if (controller.signal.aborted) return;
+      setMessages((current) => [
+        ...current,
+        {
+          id: messageId("assistant"),
+          role: "assistant",
+          content: response.answer,
+        },
+      ]);
+      setSuggestions(response.suggested_questions);
+      setGroundedFields(response.grounded_fields);
+      setSafetyNotice(response.safety_notice);
+    } catch (requestError) {
+      if (!controller.signal.aborted) {
+        setError(
+          requestError instanceof Error
+            ? requestError.message
+            : "RetinaGuide could not answer this question.",
+        );
+      }
+    } finally {
+      if (requestRef.current === controller) {
+        requestRef.current = null;
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+  }
+
+  function submitQuestion(event: FormEvent) {
+    event.preventDefault();
+    void sendQuestion(draft);
+  }
+
+  return (
+    <div className="result-section retinaguide-section">
+      <div className="subheading">
+        <h3>RetinaGuide result explanation</h3>
+        <span>Grounded in this result only</span>
+      </div>
+
+      <div className="guide-card">
+        <div className="guide-heading">
+          <span className="guide-mark"><Icon name="spark" /></span>
+          <div>
+            <strong>Ask RetinaGuide</strong>
+            <p>No image upload, diagnosis, or treatment advice</p>
+          </div>
+        </div>
+
+        <div
+          className="guide-messages"
+          role="log"
+          aria-live="polite"
+          aria-label="RetinaGuide conversation"
+        >
+          {messages.map((chatMessage) => (
+            <div
+              className={`guide-message ${chatMessage.role}`}
+              key={chatMessage.id}
+            >
+              <span>{chatMessage.role === "assistant" ? "RetinaGuide" : "You"}</span>
+              <p>{chatMessage.content}</p>
+            </div>
+          ))}
+          {loading && (
+            <div className="guide-message assistant pending" role="status">
+              <span>RetinaGuide</span>
+              <p><span className="spinner dark" /> Checking the current result…</p>
+            </div>
+          )}
+        </div>
+
+        <div className="guide-suggestions" aria-label="Suggested questions">
+          {suggestions.map((question) => (
+            <button
+              type="button"
+              key={question}
+              disabled={loading}
+              onClick={() => void sendQuestion(question)}
+            >
+              {question}
+            </button>
+          ))}
+        </div>
+
+        {error && <p className="guide-error" role="alert">{error}</p>}
+
+        <form className="guide-form" onSubmit={submitQuestion}>
+          <input
+            aria-label="Question for RetinaGuide"
+            value={draft}
+            maxLength={RETINAGUIDE_MESSAGE_LIMIT}
+            onChange={(event) => setDraft(event.target.value)}
+            placeholder="Ask about this displayed result…"
+          />
+          <button type="submit" disabled={!validGuideMessage(draft) || loading}>
+            Ask
+          </button>
+        </form>
+
+        {groundedFields.length > 0 && (
+          <p className="guide-grounding">
+            Grounded fields: {groundedFields.join(", ")}
+          </p>
+        )}
+        <p className="guide-boundary">{safetyNotice}</p>
+      </div>
+    </div>
+  );
+}
+
 function ResultPanel({
   result,
   explanation,
@@ -249,6 +416,8 @@ function ResultPanel({
         </div>
         <p className="quality-note">{result.quality.interpretation}</p>
       </div>
+
+      <RetinaGuidePanel key={result.input_sha256} result={result} />
 
       <details className="audit-details">
         <summary>Audit and policy details</summary>
@@ -546,7 +715,8 @@ export default function App() {
                   <li><span>01</span> Calibrated stage confidence</li>
                   <li><span>02</span> Technical-quality flags</li>
                   <li><span>03</span> Grad-CAM attention evidence</li>
-                  <li><span>04</span> Auditable input and model hashes</li>
+                  <li><span>04</span> Grounded RetinaGuide explanations</li>
+                  <li><span>05</span> Auditable input and model hashes</li>
                 </ul>
               </aside>
             )}
@@ -570,12 +740,12 @@ export default function App() {
         <section className="research-section" id="research">
           <div>
             <span className="section-label light">Research roadmap</span>
-            <h2>The evidence layer is ready for explanation.</h2>
-            <p>Grad-CAM explains the fixed result without changing the selected model or decision policy. RetinaGuide remains the next application integration.</p>
+            <h2>Evidence and explanation stay connected.</h2>
+            <p>Grad-CAM shows model-associated regions, while RetinaGuide explains only the returned prediction, quality and policy fields.</p>
           </div>
           <div className="roadmap-cards">
             <article><span>Integrated in application</span><h3>Grad-CAM</h3><p>Qualitative model-attention evidence with an explicit interpretation warning.</p></article>
-            <article><span>Next application stage</span><h3>RetinaGuide</h3><p>Plain-language explanations grounded only in the returned prediction, quality and policy fields.</p></article>
+            <article><span>Integrated in application</span><h3>RetinaGuide</h3><p>Deterministic plain-language explanations with explicit medical-safety boundaries.</p></article>
           </div>
         </section>
       </main>

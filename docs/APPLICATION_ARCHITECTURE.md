@@ -19,8 +19,11 @@ or use the final-test split.
    probabilities, technical-quality flags and a human-review decision.
 9. The interface requests Grad-CAM for the returned grade. The API generates
    a heatmap and overlay from the processed model input, entirely in memory.
-10. The React interface renders the result, explanation, policy and audit fields without
-   converting them into clinical advice.
+10. RetinaGuide receives a question and the current prediction response. Its
+    deterministic intent rules validate and explain only those returned fields;
+    the retinal image is not sent to the chatbot endpoint.
+11. The React interface renders the result, explanation, policy, audit fields
+    and grounded chat response without converting them into clinical advice.
 
 ## Safety and evidence boundaries
 
@@ -31,7 +34,11 @@ or use the final-test split.
 - Uploaded images are processed in memory and are not stored by the API.
 - Grad-CAM is qualitative attention evidence, not lesion localization or
   clinical evidence. Its failure does not remove an otherwise valid prediction.
-- RetinaGuide will be connected in a later application stage.
+- RetinaGuide is a deterministic result-explanation layer, not a general medical
+  chatbot. It cannot diagnose, recommend treatment or infer facts absent from
+  the current prediction response.
+- RetinaGuide does not use an external language-model service and does not
+  receive the uploaded image.
 
 ## Local API configuration
 
@@ -83,5 +90,7 @@ npm run dev
 The interface contains no model parameters. It sends a multipart image first
 to `/api/v1/predict` and then to `/api/v1/explain` using the returned grade as
 the explanation target. Keeping the endpoints separate ensures explanation
-failure cannot silently alter or erase the fixed inference result. RetinaGuide
-remains a separate future endpoint.
+failure cannot silently alter or erase the fixed inference result. The browser
+sends only a question and current prediction JSON to `/api/v1/retinaguide`.
+The chatbot response includes its detected intent, grounded field names,
+suggested follow-up questions and an explicit safety notice.

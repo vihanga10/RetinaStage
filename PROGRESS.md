@@ -24,7 +24,7 @@
 - [x] Execute robustness analysis with the fixed selected model
 - [x] Implement frozen-model inference and technical-quality API foundation
 - [x] Connect the Grad-CAM application endpoint and evidence panel
-- [ ] Connect the RetinaGuide application endpoint
+- [x] Connect the grounded RetinaGuide application endpoint and chat panel
 - [x] Build the React/TypeScript prediction user interface
 - [x] Connect and validate the user interface with an original retinal image
 - [ ] Build and demonstrate the prototype

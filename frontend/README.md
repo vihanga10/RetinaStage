@@ -43,3 +43,9 @@ After a prediction succeeds, the browser requests Grad-CAM evidence for the
 returned grade from `/api/v1/explain`. The heatmap and overlay represent the
 processed 224-pixel model input. They indicate associations in the fixed model
 and must not be interpreted as lesion localization, causality, or diagnosis.
+
+RetinaGuide sends the user's question and the current prediction JSON to
+`/api/v1/retinaguide`; it does not send the retinal image. Responses are
+deterministic and limited to the displayed grade, probabilities, confidence,
+review decision, technical-quality fields and Grad-CAM limitations. Requests
+for diagnosis or treatment are declined with the research safety boundary.
