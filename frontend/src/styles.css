@@ -258,6 +258,7 @@ nav a:hover::after, nav a:focus-visible::after { right: 0; }
 .trace-verification strong { font: 750 11px "Manrope", sans-serif; }
 .trace-error { margin: 0 16px 13px; padding: 10px 11px; border-radius: 9px; color: #8a332a; background: #fff0ed; font-size: 10px; }
 .trace-boundary { margin: 0; padding: 11px 16px; border-top: 1px solid #e2eae5; color: #70827d; background: white; font-size: 9px; line-height: 1.5; }
+.trace-print-sheet { display: none; }
 
 .method-section { background: #fbfcf8; border-top: 1px solid #e7ece8; border-bottom: 1px solid #e7ece8; }
 .method-grid { width: min(1180px, 100%); margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
@@ -320,6 +321,74 @@ footer p { margin: 0; font-size: 11px; }
   .method-grid, .roadmap-cards { grid-template-columns: 1fr; }
   .research-section { width: calc(100% - 20px); margin: 70px auto; border-radius: 24px; }
   footer { width: calc(100% - 32px); align-items: flex-start; flex-direction: column; }
+}
+
+@page { size: A4; margin: 13mm; }
+
+@media print {
+  :root, body { color: #18322f; background: white !important; }
+  .app-shell > :not(main),
+  main > :not(.analysis-section),
+  .analysis-section > :not(.analysis-grid),
+  .analysis-grid > :not(.results-card),
+  .results-card > :not(.retinatrace-section),
+  .retinatrace-section > :not(.trace-print-sheet) { display: none !important; }
+  .app-shell, main, .analysis-section, .analysis-grid, .results-card,
+  .retinatrace-section {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: white !important;
+    overflow: visible !important;
+  }
+  .trace-print-sheet {
+    display: block !important;
+    color: #18322f;
+    background: white;
+    font: 10pt/1.4 Arial, sans-serif;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .trace-print-header {
+    padding-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    border-bottom: 3px solid #0b6b5b;
+  }
+  .trace-print-header span { color: #0b6b5b; font-size: 8pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .trace-print-header h1 { margin: 5px 0 2px; color: #063f37; font-size: 22pt; line-height: 1.1; }
+  .trace-print-header p { margin: 0; color: #60736f; }
+  .trace-print-grade { min-width: 145px; padding: 10px 12px; display: grid; gap: 2px; border: 1px solid #b7dfcc; border-radius: 8px; background: #edf8f3; text-align: right; }
+  .trace-print-grade strong { color: #063f37; font-size: 16pt; }
+  .trace-print-grade b { font-size: 10pt; }
+  .trace-print-summary-grid { margin: 14px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .trace-print-summary-grid div { padding: 9px 10px; display: grid; gap: 3px; border: 1px solid #d9e2dc; border-radius: 7px; }
+  .trace-print-summary-grid span { color: #60736f; font-size: 8pt; text-transform: uppercase; }
+  .trace-print-summary-grid strong { font-size: 10pt; }
+  .trace-print-section { margin-top: 12px; break-inside: avoid; }
+  .trace-print-section h2 { margin: 0 0 7px; padding-bottom: 4px; border-bottom: 1px solid #b7c9c1; color: #063f37; font-size: 12pt; }
+  .trace-print-section p { margin: 0; }
+  .trace-print-section table { width: 100%; border-collapse: collapse; }
+  .trace-print-section th, .trace-print-section td { padding: 5px 7px; border: 1px solid #d9e2dc; text-align: left; }
+  .trace-print-section th { color: #365b53; background: #f1f6f3; font-size: 8pt; text-transform: uppercase; }
+  .trace-print-section tr.selected { background: #dff2e9; font-weight: 700; }
+  .trace-print-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .trace-print-section dl { margin: 0; display: grid; grid-template-columns: minmax(115px, .7fr) 1.3fr; }
+  .trace-print-section dt, .trace-print-section dd { margin: 0; padding: 4px 0; border-bottom: 1px solid #e5ece8; }
+  .trace-print-section dt { color: #60736f; }
+  .trace-print-section dd { font-weight: 600; }
+  .trace-print-hashes dd { overflow-wrap: anywhere; font: 7.5pt/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .trace-print-footer { width: 100%; margin-top: 14px; padding: 10px 12px; display: block; border: 1px solid #e6cfaa; border-radius: 7px; color: #6c481d; background: #fff7e9; }
+  .trace-print-footer strong { font-size: 9pt; }
+  .trace-print-footer p { margin: 4px 0 0; font-size: 8pt; }
 }
 
 @media (prefers-reduced-motion: reduce) {

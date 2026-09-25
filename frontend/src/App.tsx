@@ -24,6 +24,7 @@ import {
   validGuideMessage,
 } from "./retinaguide";
 import {
+  formatReceiptTimestamp,
   MAX_RECEIPT_BYTES,
   parseRetinaTraceReceipt,
   receiptDownloadName,
@@ -352,6 +353,147 @@ function RetinaGuidePanel({ result }: { result: PredictionResponse }) {
   );
 }
 
+function PrintableRetinaTraceReceipt({
+  receipt,
+}: {
+  receipt: RetinaTraceReceipt;
+}) {
+  const quality = receipt.quality.metrics;
+  const reviewReasons = receipt.prediction.review_reasons.length
+    ? receipt.prediction.review_reasons.map(formatFlag).join(", ")
+    : "None recorded";
+  const qualityFlags = receipt.quality.flags.length
+    ? receipt.quality.flags.map(formatFlag).join(", ")
+    : "None recorded";
+
+  return (
+    <article className="trace-print-sheet">
+      <header className="trace-print-header">
+        <div>
+          <span>RetinaStage educational research prototype</span>
+          <h1>RetinaTrace prediction receipt</h1>
+          <p>Portable human-readable evidence summary</p>
+        </div>
+        <div className="trace-print-grade">
+          <span>Selected output</span>
+          <strong>Grade {receipt.prediction.predicted_grade}</strong>
+          <b>{receipt.prediction.predicted_label}</b>
+        </div>
+      </header>
+
+      <section className="trace-print-summary-grid">
+        <div>
+          <span>Issued</span>
+          <strong>{formatReceiptTimestamp(receipt.issued_at_utc)}</strong>
+        </div>
+        <div>
+          <span>Calibrated confidence</span>
+          <strong>{formatPercent(receipt.prediction.confidence)}</strong>
+        </div>
+        <div>
+          <span>Human review</span>
+          <strong>
+            {receipt.prediction.requires_human_review
+              ? "Required"
+              : "No automated trigger"}
+          </strong>
+        </div>
+      </section>
+
+      <section className="trace-print-section">
+        <h2>Five-stage calibrated distribution</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>Label</th>
+              <th>Probability</th>
+            </tr>
+          </thead>
+          <tbody>
+            {receipt.prediction.probabilities.map((item) => (
+              <tr
+                key={item.grade}
+                className={
+                  item.grade === receipt.prediction.predicted_grade
+                    ? "selected"
+                    : undefined
+                }
+              >
+                <td>{item.grade}</td>
+                <td>{item.label}</td>
+                <td>{formatPercent(item.probability)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      <section className="trace-print-columns">
+        <div className="trace-print-section">
+          <h2>Review and policy</h2>
+          <dl>
+            <dt>Uncertain</dt>
+            <dd>{receipt.prediction.uncertain ? "Yes" : "No"}</dd>
+            <dt>Review reasons</dt>
+            <dd>{reviewReasons}</dd>
+            <dt>Temperature</dt>
+            <dd>{receipt.policy.temperature.toFixed(6)}</dd>
+            <dt>Confidence threshold</dt>
+            <dd>{formatPercent(receipt.policy.confidence_threshold)}</dd>
+          </dl>
+        </div>
+
+        <div className="trace-print-section">
+          <h2>Technical image quality</h2>
+          <dl>
+            <dt>Brightness</dt>
+            <dd>{quality.brightness_mean.toFixed(1)}</dd>
+            <dt>Contrast</dt>
+            <dd>{quality.contrast_std.toFixed(1)}</dd>
+            <dt>Sharpness</dt>
+            <dd>{quality.sharpness_laplacian_variance.toFixed(1)}</dd>
+            <dt>Retinal coverage</dt>
+            <dd>{formatPercent(quality.retinal_field_coverage)}</dd>
+            <dt>Quality flags</dt>
+            <dd>{qualityFlags}</dd>
+          </dl>
+        </div>
+      </section>
+
+      <section className="trace-print-section">
+        <h2>Explanation evidence</h2>
+        <p>
+          {receipt.explanation.included
+            ? `Grad-CAM metadata included for Grade ${receipt.explanation.target_grade} (${receipt.explanation.target_label}), using ${receipt.explanation.backbone_layer}. Heatmap and overlay image pixels are excluded from this receipt.`
+            : "Grad-CAM metadata was not included in this receipt."}
+        </p>
+      </section>
+
+      <section className="trace-print-section trace-print-hashes">
+        <h2>Traceability</h2>
+        <dl>
+          <dt>Input SHA-256</dt>
+          <dd>{receipt.traceability.input_sha256}</dd>
+          <dt>Model SHA-256</dt>
+          <dd>{receipt.traceability.model_sha256}</dd>
+          <dt>Receipt SHA-256</dt>
+          <dd>{receipt.integrity.receipt_sha256}</dd>
+        </dl>
+      </section>
+
+      <footer className="trace-print-footer">
+        <strong>{receipt.educational_notice}</strong>
+        <p>
+          The retinal image, original filename and Grad-CAM image data are not
+          included. The checksum detects content changes; it is not a digital
+          signature and does not authenticate the issuer.
+        </p>
+      </footer>
+    </article>
+  );
+}
+
 function RetinaTracePanel({
   result,
   explanation,
@@ -452,7 +594,12 @@ function RetinaTracePanel({
           </button>
           {receipt && (
             <button type="button" className="secondary" onClick={downloadReceipt}>
-              Download JSON
+              Download verification JSON
+            </button>
+          )}
+          {receipt && (
+            <button type="button" className="secondary" onClick={() => window.print()}>
+              Print / Save PDF
             </button>
           )}
           <label className={`trace-file-button ${activity !== "idle" ? "disabled" : ""}`}>
@@ -499,6 +646,7 @@ function RetinaTracePanel({
           not prove who created the receipt.
         </p>
       </div>
+      {receipt && <PrintableRetinaTraceReceipt receipt={receipt} />}
     </div>
   );
 }
