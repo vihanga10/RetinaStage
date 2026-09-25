@@ -18,7 +18,9 @@ validation-only robustness analysis. The prototype application API wraps the
 frozen selected model, calibration policy and technical-quality checks. A
 React/TypeScript interface now provides image upload, calibrated probability
 display, quality warnings, auditable review information, and Grad-CAM
-attention evidence for the predicted grade.
+attention evidence for the predicted grade. RetinaGuide explains returned
+fields within a fixed safety boundary, while RetinaTrace creates a
+privacy-preserving JSON evidence receipt that can later be checked for changes.
 
 ## Dataset
 APTOS 2019 Blindness Detection:
@@ -139,10 +141,20 @@ the returned grade, calibrated probabilities, uncertainty policy and technical
 quality fields. It does not send the image, call an external language model,
 diagnose disease or recommend treatment.
 
+The RetinaTrace panel sends the current result to
+`/api/v1/retinatrace/receipt`, downloads the returned JSON receipt, and can
+upload a saved receipt to `/api/v1/retinatrace/verify`. The receipt records the
+input and model hashes, calibrated result, five probabilities, technical
+quality, review policy and optional Grad-CAM metadata. It deliberately excludes
+the retinal image, original filename, heatmap and overlay image data. Its
+canonical SHA-256 checksum detects later modification; it is not a digital
+signature and therefore does not prove who issued the receipt.
+
 Evaluate this response layer independently with:
 
 ```bash
 python scripts/evaluate_retinaguide.py
+python scripts/evaluate_retinatrace.py
 ```
 
 The fixed 15-case matrix checks intent routing, exact field grounding, required
@@ -181,6 +193,13 @@ The RetinaGuide response-layer evaluation passed all 15 fixed cases. Intent,
 grounding, required-content, determinism and safety-compliance rates were each
 1.0000. See `docs/RETINAGUIDE_EVALUATION.md` for the method, metric definitions,
 manual end-to-end scenarios and scope limitations.
+
+The RetinaTrace evaluation passed all 9 fixed integrity, traceability, privacy
+and serialization checks. All three controlled receipt modifications were
+detected, and the evidence confirms that image bytes, filenames and Grad-CAM
+image data are omitted. See `docs/RETINATRACE_RECEIPT.md`. These checks assess
+receipt behaviour only; they do not add evidence about diagnostic validity or
+classifier performance.
 
 ## Intended use
 Educational research prototype; not validated for clinical use.
