@@ -142,13 +142,15 @@ quality fields. It does not send the image, call an external language model,
 diagnose disease or recommend treatment.
 
 The RetinaTrace panel sends the current result to
-`/api/v1/retinatrace/receipt`, downloads the returned JSON receipt, and can
-upload a saved receipt to `/api/v1/retinatrace/verify`. The receipt records the
-input and model hashes, calibrated result, five probabilities, technical
-quality, review policy and optional Grad-CAM metadata. It deliberately excludes
-the retinal image, original filename, heatmap and overlay image data. Its
-canonical SHA-256 checksum detects later modification; it is not a digital
-signature and therefore does not prove who issued the receipt.
+`/api/v1/retinatrace/receipt`. Users can download the returned verification
+JSON, print or save a human-readable A4 PDF, and upload a saved JSON receipt to
+`/api/v1/retinatrace/verify`. The receipt records the input and model hashes,
+calibrated result, five probabilities, technical quality, review policy and
+optional Grad-CAM metadata. It deliberately excludes the retinal image,
+original filename, heatmap and overlay image data. Its canonical SHA-256
+checksum detects later modification; it is not a digital signature and
+therefore does not prove who issued the receipt. The JSON remains the
+machine-verifiable record; the PDF is a readable presentation of it.
 
 Evaluate this response layer independently with:
 

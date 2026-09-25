@@ -48,3 +48,12 @@ export function shortReceiptHash(receipt: RetinaTraceReceipt): string {
   const checksum = receipt.integrity.receipt_sha256;
   return `${checksum.slice(0, 12)}…${checksum.slice(-12)}`;
 }
+
+export function formatReceiptTimestamp(value: string): string {
+  const match = value.match(
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/,
+  );
+  if (!match) return value;
+  const [, year, month, day, hour, minute, second] = match;
+  return `${year}-${month}-${day} ${hour}:${minute}:${second} UTC`;
+}

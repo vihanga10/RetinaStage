@@ -52,11 +52,19 @@ explicitly versioned feature.
 2. The browser removes Grad-CAM image data URLs and sends the prediction plus
    sanitized explanation metadata to `/api/v1/retinatrace/receipt`.
 3. The API validates cross-field consistency and returns a checksummed receipt.
-4. The browser downloads the JSON using a name derived from the receipt hash,
-   not the original image filename.
-5. A user can select a saved JSON receipt. The browser applies format and size
+4. The browser can download the verification JSON using a name derived from
+   the receipt hash, not the original image filename.
+5. The browser can also render an A4 human-readable receipt and open the native
+   print dialog. On macOS, the dialog can save this presentation as PDF.
+6. A user can select a saved JSON receipt. The browser applies format and size
    checks, then sends it to `/api/v1/retinatrace/verify`.
-6. The interface reports whether the saved content matches its stored checksum.
+7. The interface reports whether the saved content matches its stored checksum.
+
+The verification JSON and printable receipt serve different purposes. The JSON
+preserves the exact structured fields required for checksum verification. The
+printable version presents those fields for human review and coursework
+demonstration; a PDF exported from the print dialog is not accepted as input to
+the verification endpoint.
 
 Receipt creation and verification do not load the TensorFlow model, perform
 another prediction or store an uploaded retinal image.

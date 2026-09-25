@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  formatReceiptTimestamp,
   parseRetinaTraceReceipt,
   receiptDownloadName,
   serialiseRetinaTraceReceipt,
@@ -81,6 +82,15 @@ describe("RetinaTrace frontend helpers", () => {
   it("shortens a checksum while preserving both ends", () => {
     expect(shortReceiptHash(receiptFixture())).toBe(
       "aaaaaaaaaaaa…aaaaaaaaaaaa",
+    );
+  });
+
+  it("formats the UTC issue time without depending on browser locale", () => {
+    expect(formatReceiptTimestamp(receiptFixture().issued_at_utc)).toBe(
+      "2026-09-25 05:30:00 UTC",
+    );
+    expect(formatReceiptTimestamp("unrecognised-time")).toBe(
+      "unrecognised-time",
     );
   });
 });
