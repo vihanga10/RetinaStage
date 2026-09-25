@@ -387,7 +387,11 @@ def write_evaluation_artifacts(
     results_path = output_directory / "retinaguide_evaluation_results.csv"
     summary_path = output_directory / "retinaguide_evaluation_summary.json"
     with results_path.open("w", encoding="utf-8", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=CSV_FIELDS)
+        writer = csv.DictWriter(
+            file,
+            fieldnames=CSV_FIELDS,
+            lineterminator="\n",
+        )
         writer.writeheader()
         writer.writerows(rows)
     summary_path.write_text(
