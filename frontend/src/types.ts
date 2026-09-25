@@ -88,3 +88,56 @@ export interface RetinaGuideMessage {
   role: "assistant" | "user";
   content: string;
 }
+
+export interface RetinaTraceExplanationEvidence {
+  included: boolean;
+  target_grade?: number;
+  target_label?: string;
+  backbone_layer?: string;
+  input_space?: string;
+  interpretation?: string;
+}
+
+export interface RetinaTraceReceipt {
+  receipt_type: "retinastage_prediction_evidence";
+  schema_version: 1;
+  issued_at_utc: string;
+  traceability: {
+    input_sha256: string;
+    model_sha256: string;
+  };
+  prediction: {
+    predicted_grade: number;
+    predicted_label: string;
+    confidence: number;
+    uncertain: boolean;
+    requires_human_review: boolean;
+    review_reasons: string[];
+    probabilities: GradeProbability[];
+  };
+  quality: QualityAssessment;
+  policy: InferencePolicy;
+  explanation: RetinaTraceExplanationEvidence;
+  privacy: {
+    retinal_image_included: false;
+    original_filename_included: false;
+    gradcam_image_data_included: false;
+  };
+  educational_notice: string;
+  integrity_notice: string;
+  integrity: {
+    algorithm: "SHA-256";
+    canonicalization: string;
+    scope: string;
+    receipt_sha256: string;
+  };
+}
+
+export interface RetinaTraceVerification {
+  valid: boolean;
+  algorithm: "SHA-256";
+  supplied_sha256: string;
+  computed_sha256: string;
+  message: string;
+  authenticity_warning: string;
+}

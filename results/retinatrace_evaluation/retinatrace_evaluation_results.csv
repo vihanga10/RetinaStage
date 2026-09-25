@@ -1,0 +1,10 @@
+check_id,category,passed,evidence
+unchanged_receipt,integrity,True,Unmodified receipt passed checksum verification.
+prediction_tamper,integrity,True,Modified receipt failed checksum verification.
+probability_tamper,integrity,True,Modified receipt failed checksum verification.
+review_tamper,integrity,True,Modified receipt failed checksum verification.
+five_probabilities,completeness,True,Receipt contains all five ordered grade probabilities.
+traceability_hashes,traceability,True,Input and model SHA-256 values were preserved.
+image_bytes_excluded,privacy,True,Retinal and Grad-CAM image bytes are absent.
+filename_excluded,privacy,True,Supplied original filename is absent and explicitly excluded.
+stable_serialisation,repeatability,True,Repeated JSON serialization is byte-stable.

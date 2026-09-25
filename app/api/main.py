@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field
 
 from retinastage.inference import RetinaStagePredictor
 from retinastage.retinaguide import explain_prediction
+from retinastage.retinatrace import build_receipt, verify_receipt
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -78,6 +79,19 @@ class RetinaGuideRequest(BaseModel):
 
     message: str = Field(min_length=1, max_length=500)
     result: dict[str, object]
+
+
+class RetinaTraceReceiptRequest(BaseModel):
+    """Validated prediction evidence used to build a receipt."""
+
+    result: dict[str, object]
+    explanation: dict[str, object] | None = None
+
+
+class RetinaTraceVerifyRequest(BaseModel):
+    """One previously generated receipt submitted for integrity checking."""
+
+    receipt: dict[str, object]
 
 
 def get_predictor() -> RetinaStagePredictor:
@@ -182,4 +196,34 @@ def retinaguide(request: RetinaGuideRequest) -> dict[str, object]:
         raise HTTPException(
             status_code=422,
             detail=f"Invalid prediction context: {error}",
+        ) from error
+
+
+@app.post("/api/v1/retinatrace/receipt")
+def create_retinatrace_receipt(
+    request: RetinaTraceReceiptRequest,
+) -> dict[str, object]:
+    """Create an in-memory receipt without loading the model or storing images."""
+
+    try:
+        return build_receipt(request.result, request.explanation)
+    except (KeyError, TypeError, ValueError) as error:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid receipt evidence: {error}",
+        ) from error
+
+
+@app.post("/api/v1/retinatrace/verify")
+def verify_retinatrace_receipt(
+    request: RetinaTraceVerifyRequest,
+) -> dict[str, object]:
+    """Check receipt integrity without asserting authorship or authenticity."""
+
+    try:
+        return verify_receipt(request.receipt)
+    except (KeyError, TypeError, ValueError) as error:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid RetinaTrace receipt: {error}",
         ) from error

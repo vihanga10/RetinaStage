@@ -22,7 +22,13 @@ or use the final-test split.
 10. RetinaGuide receives a question and the current prediction response. Its
     deterministic intent rules validate and explain only those returned fields;
     the retinal image is not sent to the chatbot endpoint.
-11. The React interface renders the result, explanation, policy, audit fields
+11. RetinaTrace validates the current response and optional explanation
+    metadata, then creates a canonical JSON evidence receipt. The image,
+    filename, heatmap and overlay bytes are excluded.
+12. A saved receipt can be uploaded to the verification endpoint. The API
+    recomputes its canonical SHA-256 checksum and reports whether the content
+    is unchanged.
+13. The React interface renders the result, explanation, policy, audit fields
     and grounded chat response without converting them into clinical advice.
 
 ## Safety and evidence boundaries
@@ -39,6 +45,12 @@ or use the final-test split.
   the current prediction response.
 - RetinaGuide does not use an external language-model service and does not
   receive the uploaded image.
+- RetinaTrace receipts omit the retinal image, original filename, heatmap and
+  overlay data URLs. The input hash supports matching to a known input without
+  embedding that input.
+- The RetinaTrace checksum detects modification of receipt content. It is not
+  a digital signature, does not authenticate the issuer and does not establish
+  that a prediction is medically correct.
 
 ## Local API configuration
 
@@ -95,6 +107,12 @@ sends only a question and current prediction JSON to `/api/v1/retinaguide`.
 The chatbot response includes its detected intent, grounded field names,
 suggested follow-up questions and an explicit safety notice.
 
+The browser sends the current prediction and sanitized explanation metadata to
+`/api/v1/retinatrace/receipt`. Only the explanation hashes, target, layer,
+input-space label and limitation text are retained; Grad-CAM image data URLs
+never enter the receipt. Saved receipts are checked by
+`/api/v1/retinatrace/verify`.
+
 ## RetinaGuide response-layer evaluation
 
 The deterministic chatbot can be evaluated without loading TensorFlow or
@@ -116,3 +134,19 @@ model, the calibration split or the final-test split. It establishes the
 behaviour of the result-explanation layer only; it does not add evidence about
 clinical validity or classifier performance. The complete protocol and results
 are documented in `docs/RETINAGUIDE_EVALUATION.md`.
+
+## RetinaTrace receipt evaluation
+
+The receipt layer can be evaluated without TensorFlow, the retinal dataset or
+the final-test split:
+
+```bash
+python scripts/evaluate_retinatrace.py
+```
+
+The fixed matrix checks unchanged verification, three controlled content
+modifications, five-class completeness, traceability hashes, privacy omissions
+and byte-stable serialization. It writes row-level CSV evidence and a JSON
+summary to `results/retinatrace_evaluation/`. This is software-integrity and
+privacy evidence, not classifier or clinical evaluation. See
+`docs/RETINATRACE_RECEIPT.md` for the complete protocol and limitations.

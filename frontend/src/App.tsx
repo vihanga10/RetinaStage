@@ -11,9 +11,11 @@ import {
 import {
   API_BASE_URL,
   askRetinaGuide,
+  createRetinaTraceReceipt,
   explainImage,
   fetchHealth,
   predictImage,
+  verifyRetinaTraceReceipt,
 } from "./api";
 import {
   createGuideWelcome,
@@ -21,11 +23,20 @@ import {
   RETINAGUIDE_MESSAGE_LIMIT,
   validGuideMessage,
 } from "./retinaguide";
+import {
+  MAX_RECEIPT_BYTES,
+  parseRetinaTraceReceipt,
+  receiptDownloadName,
+  serialiseRetinaTraceReceipt,
+  shortReceiptHash,
+} from "./retinatrace";
 import type {
   ExplanationResponse,
   HealthResponse,
   PredictionResponse,
   RetinaGuideMessage,
+  RetinaTraceReceipt,
+  RetinaTraceVerification,
 } from "./types";
 import { formatFlag, formatPercent, reviewState } from "./view-model";
 
@@ -341,6 +352,157 @@ function RetinaGuidePanel({ result }: { result: PredictionResponse }) {
   );
 }
 
+function RetinaTracePanel({
+  result,
+  explanation,
+}: {
+  result: PredictionResponse;
+  explanation: ExplanationResponse | null;
+}) {
+  const [receipt, setReceipt] = useState<RetinaTraceReceipt | null>(null);
+  const [verification, setVerification] =
+    useState<RetinaTraceVerification | null>(null);
+  const [activity, setActivity] = useState<"idle" | "creating" | "verifying">(
+    "idle",
+  );
+  const [error, setError] = useState<string | null>(null);
+  const verifyInputRef = useRef<HTMLInputElement>(null);
+
+  async function createReceipt() {
+    setActivity("creating");
+    setError(null);
+    setVerification(null);
+    try {
+      setReceipt(await createRetinaTraceReceipt(result, explanation));
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "The evidence receipt could not be created.",
+      );
+    } finally {
+      setActivity("idle");
+    }
+  }
+
+  function downloadReceipt() {
+    if (!receipt) return;
+    const blob = new Blob([serialiseRetinaTraceReceipt(receipt)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = receiptDownloadName(receipt);
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function verifyReceiptFile(event: ChangeEvent<HTMLInputElement>) {
+    const selected = event.target.files?.[0];
+    event.target.value = "";
+    if (!selected) return;
+    setError(null);
+    setVerification(null);
+    if (selected.size > MAX_RECEIPT_BYTES) {
+      setError("The selected receipt exceeds the 512 KB verification limit.");
+      return;
+    }
+    setActivity("verifying");
+    try {
+      const parsed = parseRetinaTraceReceipt(await selected.text());
+      setVerification(await verifyRetinaTraceReceipt(parsed));
+    } catch (verificationError) {
+      setError(
+        verificationError instanceof Error
+          ? verificationError.message
+          : "The selected receipt could not be verified.",
+      );
+    } finally {
+      setActivity("idle");
+    }
+  }
+
+  return (
+    <div className="result-section retinatrace-section">
+      <div className="subheading">
+        <h3>RetinaTrace evidence receipt</h3>
+        <span>No retinal image stored</span>
+      </div>
+
+      <div className="trace-card">
+        <div className="trace-intro">
+          <span className="trace-mark"><Icon name="shield" /></span>
+          <div>
+            <strong>Portable integrity evidence</strong>
+            <p>
+              Save the result, policy, review decision and traceability hashes
+              as JSON. Grad-CAM image data and the original filename are omitted.
+            </p>
+          </div>
+        </div>
+
+        <div className="trace-actions">
+          <button
+            type="button"
+            onClick={() => void createReceipt()}
+            disabled={activity !== "idle"}
+          >
+            {activity === "creating" ? "Creating…" : "Create receipt"}
+          </button>
+          {receipt && (
+            <button type="button" className="secondary" onClick={downloadReceipt}>
+              Download JSON
+            </button>
+          )}
+          <label className={`trace-file-button ${activity !== "idle" ? "disabled" : ""}`}>
+            Verify saved receipt
+            <input
+              ref={verifyInputRef}
+              type="file"
+              accept="application/json,.json"
+              disabled={activity !== "idle"}
+              onChange={(event) => void verifyReceiptFile(event)}
+            />
+          </label>
+        </div>
+
+        {receipt && (
+          <div className="trace-summary" role="status">
+            <span>Receipt checksum</span>
+            <code>{shortReceiptHash(receipt)}</code>
+            <small>
+              {receipt.explanation.included
+                ? "Grad-CAM metadata included; heatmap pixels excluded."
+                : "Receipt created without Grad-CAM metadata."}
+            </small>
+          </div>
+        )}
+
+        {verification && (
+          <div
+            className={`trace-verification ${verification.valid ? "valid" : "invalid"}`}
+            role="status"
+          >
+            <strong>
+              {verification.valid
+                ? "Receipt integrity verified"
+                : "Receipt modification detected"}
+            </strong>
+            <span>{verification.message}</span>
+          </div>
+        )}
+
+        {error && <p className="trace-error" role="alert">{error}</p>}
+        <p className="trace-boundary">
+          A checksum detects changes; it is not a digital signature and does
+          not prove who created the receipt.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function ResultPanel({
   result,
   explanation,
@@ -427,6 +589,12 @@ function ResultPanel({
       </div>
 
       <RetinaGuidePanel key={result.input_sha256} result={result} />
+
+      <RetinaTracePanel
+        key={`${result.input_sha256}-receipt`}
+        result={result}
+        explanation={explanationState === "complete" ? explanation : null}
+      />
 
       <details className="audit-details">
         <summary>Audit and policy details</summary>

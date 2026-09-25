@@ -1,0 +1,18 @@
+{
+  "all_checks_passed": true,
+  "analysis": "retinatrace_receipt_evaluation",
+  "cryptographic_signature_used": false,
+  "evaluation_version": 1,
+  "failed_check_ids": [],
+  "failed_checks": 0,
+  "final_test_split_used": false,
+  "limitations": "SHA-256 detects receipt modification but does not authenticate the issuer. These controlled checks do not evaluate clinical correctness or model performance.",
+  "model_inference_used": false,
+  "pass_rate": 1.0,
+  "passed_checks": 9,
+  "privacy_checks_passed": true,
+  "retinal_images_used": false,
+  "tamper_cases": 3,
+  "tamper_detection_rate": 1.0,
+  "total_checks": 9
+}

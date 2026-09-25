@@ -55,3 +55,14 @@ do not move or obscure the result sections around it.
 The response engine's fixed evaluation is run from the repository root with
 `python scripts/evaluate_retinaguide.py`. It tests controlled prediction JSON,
 not retinal images or model predictions; see `docs/RETINAGUIDE_EVALUATION.md`.
+
+RetinaTrace creates a downloadable JSON evidence receipt from the current
+result and optional Grad-CAM metadata. The receipt includes traceability hashes,
+all five calibrated probabilities, quality fields, policy and review decision,
+but excludes the retinal image, original filename, heatmap and overlay bytes.
+A saved receipt can be uploaded to verify that its canonical content still
+matches its SHA-256 checksum. This detects modification; it is not a digital
+signature and does not authenticate the receipt issuer. Run the fixed receipt
+evaluation from the repository root with
+`python scripts/evaluate_retinatrace.py`; see
+`docs/RETINATRACE_RECEIPT.md` for scope and limitations.

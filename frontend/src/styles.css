@@ -236,6 +236,28 @@ nav a:hover::after, nav a:focus-visible::after { right: 0; }
 .guide-error { margin: 0; padding: 10px 16px; color: #8a332a; background: #fff0ed; font-size: 11px; }
 .guide-grounding, .guide-boundary { margin: 0; padding: 0 16px 10px; color: #71837e; background: white; font-size: 9px; line-height: 1.5; }
 .guide-grounding { color: #4f6862; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.trace-card { overflow: hidden; border: 1px solid #d9e5df; border-radius: 16px; background: #f7faf8; }
+.trace-intro { padding: 16px; display: flex; align-items: flex-start; gap: 12px; }
+.trace-intro > div { display: grid; gap: 4px; }
+.trace-intro strong { font: 750 13px "Manrope", sans-serif; }
+.trace-intro p { margin: 0; color: #617670; font-size: 10px; line-height: 1.55; }
+.trace-mark { flex: 0 0 auto; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; color: var(--green-800); background: var(--green-100); }
+.trace-mark .icon { width: 19px; }
+.trace-actions { padding: 0 16px 14px; display: flex; flex-wrap: wrap; gap: 7px; }
+.trace-actions button, .trace-file-button { min-height: 38px; display: inline-flex; align-items: center; justify-content: center; padding: 0 12px; border: 1px solid var(--green-800); border-radius: 10px; color: white; background: var(--green-800); font-size: 10px; font-weight: 800; cursor: pointer; }
+.trace-actions button.secondary, .trace-file-button { color: var(--green-800); background: white; }
+.trace-actions button:disabled, .trace-file-button.disabled { cursor: not-allowed; opacity: .55; }
+.trace-file-button input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.trace-summary { margin: 0 16px 13px; padding: 11px 12px; display: grid; gap: 4px; border-radius: 10px; color: #46615a; background: white; font-size: 9px; }
+.trace-summary span { font-weight: 800; text-transform: uppercase; letter-spacing: .07em; }
+.trace-summary code { overflow-wrap: anywhere; color: var(--green-950); font-size: 10px; }
+.trace-summary small { color: #70827d; line-height: 1.45; }
+.trace-verification { margin: 0 16px 13px; padding: 11px 12px; display: grid; gap: 3px; border-radius: 10px; font-size: 10px; }
+.trace-verification.valid { border: 1px solid #b7dfcc; color: var(--green-950); background: var(--green-50); }
+.trace-verification.invalid { border: 1px solid #efc1b9; color: #812f27; background: #fff0ed; }
+.trace-verification strong { font: 750 11px "Manrope", sans-serif; }
+.trace-error { margin: 0 16px 13px; padding: 10px 11px; border-radius: 9px; color: #8a332a; background: #fff0ed; font-size: 10px; }
+.trace-boundary { margin: 0; padding: 11px 16px; border-top: 1px solid #e2eae5; color: #70827d; background: white; font-size: 9px; line-height: 1.5; }
 
 .method-section { background: #fbfcf8; border-top: 1px solid #e7ece8; border-bottom: 1px solid #e7ece8; }
 .method-grid { width: min(1180px, 100%); margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
