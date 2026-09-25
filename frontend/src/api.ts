@@ -2,6 +2,7 @@ import type {
   ExplanationResponse,
   HealthResponse,
   PredictionResponse,
+  RetinaGuideResponse,
 } from "./types";
 
 const FALLBACK_API_URL = "http://127.0.0.1:8000";
@@ -72,4 +73,21 @@ export async function explainImage(
     throw new Error(await extractError(response));
   }
   return (await response.json()) as ExplanationResponse;
+}
+
+export async function askRetinaGuide(
+  message: string,
+  result: PredictionResponse,
+  signal?: AbortSignal,
+): Promise<RetinaGuideResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/retinaguide`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, result }),
+    signal,
+  });
+  if (!response.ok) {
+    throw new Error(await extractError(response));
+  }
+  return (await response.json()) as RetinaGuideResponse;
 }
