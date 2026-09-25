@@ -8,8 +8,10 @@ from threading import Lock
 
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
 
 from retinastage.inference import RetinaStagePredictor
+from retinastage.retinaguide import explain_prediction
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -69,6 +71,13 @@ app.add_middleware(
 
 _predictor: RetinaStagePredictor | None = None
 _load_lock = Lock()
+
+
+class RetinaGuideRequest(BaseModel):
+    """One question grounded in the current prediction response."""
+
+    message: str = Field(min_length=1, max_length=500)
+    result: dict[str, object]
 
 
 def get_predictor() -> RetinaStagePredictor:
@@ -161,3 +170,16 @@ async def explain(
         raise HTTPException(status_code=503, detail=str(error)) from error
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
+
+
+@app.post("/api/v1/retinaguide")
+def retinaguide(request: RetinaGuideRequest) -> dict[str, object]:
+    """Explain supplied prediction fields without loading or changing the model."""
+
+    try:
+        return explain_prediction(request.message, request.result)
+    except (KeyError, TypeError, ValueError) as error:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid prediction context: {error}",
+        ) from error
