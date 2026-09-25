@@ -208,6 +208,34 @@ nav a:hover::after, nav a:focus-visible::after { right: 0; }
 .educational-notice { margin-top: 14px; padding: 13px 14px; display: flex; align-items: flex-start; gap: 10px; border-radius: 12px; color: #536661; background: #f1f4f1; }
 .educational-notice .icon { flex: 0 0 auto; width: 18px; color: var(--green-800); }
 .educational-notice p { margin: 0; font-size: 11px; line-height: 1.55; }
+.guide-card { overflow: hidden; border: 1px solid #dce7e1; border-radius: 16px; background: #f8faf8; }
+.guide-heading { padding: 15px 16px; display: flex; align-items: center; gap: 11px; color: white; background: linear-gradient(135deg, #0a5147, #0b7463); }
+.guide-heading > div { display: grid; gap: 2px; }
+.guide-heading strong { font: 750 14px "Manrope", sans-serif; }
+.guide-heading p { margin: 0; color: rgba(255,255,255,.72); font-size: 10px; }
+.guide-mark { flex: 0 0 auto; width: 35px; height: 35px; display: grid; place-items: center; border-radius: 11px; color: #d4ffbf; background: rgba(255,255,255,.12); }
+.guide-mark .icon { width: 19px; }
+.guide-messages { max-height: 330px; overflow-y: auto; padding: 16px; display: grid; gap: 10px; background: #f5f8f5; }
+.guide-message { max-width: 91%; padding: 10px 12px; display: grid; gap: 4px; border-radius: 13px; }
+.guide-message > span { font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.guide-message p { margin: 0; font-size: 11px; line-height: 1.55; }
+.guide-message.assistant { justify-self: start; border: 1px solid #dce7e1; color: #405a54; background: white; }
+.guide-message.assistant > span { color: var(--green-800); }
+.guide-message.user { justify-self: end; color: white; background: var(--green-800); }
+.guide-message.user > span { color: #b8ead5; }
+.guide-message.pending p { display: flex; align-items: center; gap: 8px; }
+.guide-message.pending .spinner { width: 13px; height: 13px; }
+.guide-suggestions { padding: 0 16px 12px; display: flex; flex-wrap: wrap; gap: 6px; background: #f5f8f5; }
+.guide-suggestions button { padding: 7px 9px; border: 1px solid #cbded5; border-radius: 999px; color: var(--green-800); background: white; font: 650 10px "Inter", sans-serif; cursor: pointer; }
+.guide-suggestions button:hover { border-color: var(--green-650); background: var(--green-50); }
+.guide-suggestions button:disabled { cursor: not-allowed; opacity: .55; }
+.guide-form { padding: 12px; display: grid; grid-template-columns: 1fr auto; gap: 8px; border-top: 1px solid #dfe8e3; background: white; }
+.guide-form input { min-width: 0; min-height: 42px; padding: 0 12px; border: 1px solid #cfdcd6; border-radius: 10px; color: var(--ink); background: white; font: 500 11px "Inter", sans-serif; }
+.guide-form button { min-width: 64px; border: 0; border-radius: 10px; color: white; background: var(--green-800); font-weight: 800; cursor: pointer; }
+.guide-form button:disabled { cursor: not-allowed; background: #9fb5ae; }
+.guide-error { margin: 0; padding: 10px 16px; color: #8a332a; background: #fff0ed; font-size: 11px; }
+.guide-grounding, .guide-boundary { margin: 0; padding: 0 16px 10px; color: #71837e; background: white; font-size: 9px; line-height: 1.5; }
+.guide-grounding { color: #4f6862; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 
 .method-section { background: #fbfcf8; border-top: 1px solid #e7ece8; border-bottom: 1px solid #e7ece8; }
 .method-grid { width: min(1180px, 100%); margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
@@ -264,6 +292,9 @@ footer p { margin: 0; font-size: 11px; }
   .confidence-ring { width: 70px; height: 70px; }
   .metrics-grid { grid-template-columns: 1fr 1fr; }
   .explanation-grid { grid-template-columns: 1fr; }
+  .guide-message { max-width: 96%; }
+  .guide-form { grid-template-columns: 1fr; }
+  .guide-form button { min-height: 40px; }
   .method-grid, .roadmap-cards { grid-template-columns: 1fr; }
   .research-section { width: calc(100% - 20px); margin: 70px auto; border-radius: 24px; }
   footer { width: calc(100% - 32px); align-items: flex-start; flex-direction: column; }
